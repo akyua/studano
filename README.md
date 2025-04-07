@@ -1,10 +1,11 @@
 # Studano
 
 > **Note**: Projeto para matéria de android na faculdade, será um aplicativo mobile com foco em organização de estudos.
-> No aplicativo será disponibilizado funções como pomodoro e linkar cada sessão pomodoro com a matéria que vai estudar
-> Possuir um checkout de dias de ofensivas que é semelhante ao Duolingo, um histórico da semana/mes/ano de quantas sessões foram realizadas.
-> Sistema de notificação que o usuário vai definir os dias da semana que serão de estudos e qual vai ser a hora e a matéria que vai estudar naquele dia/hora, com isso receberá uma notificação para lembrá-lo.
-> Existe a possibilidade do projeto receber funções como mostrar seu perfil, com todos os históricos, talvez a implementação de funções de Flash Cards, mas que serão analisadas com o tempo.
+
+- No aplicativo será disponibilizado funções como pomodoro e linkar cada sessão pomodoro com a matéria que vai estudar
+- Possuir um checkout de dias de ofensivas que é semelhante ao Duolingo, um histórico da semana/mes/ano de quantas sessões foram realizadas.
+- Sistema de notificação que o usuário vai definir os dias da semana que serão de estudos e qual vai ser a hora e a matéria que vai estudar naquele dia/hora, com isso receberá uma notificação para lembrá-lo.
+- Existe a possibilidade do projeto receber funções como mostrar seu perfil, com todos os históricos, talvez a implementação de funções de Flash Cards, mas que serão analisadas com o tempo.
 
 ## Tecnologias
 
