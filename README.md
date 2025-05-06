@@ -35,15 +35,60 @@ Entrar na pasta do projeto -> cd ANDROID20251
 Necessário ter instalado as tecnologias citadas na parte de tecnologias.
 
 (Opcional) - Configurar para usar npm sem problemas de uso de sudo.
-Criar o: mkdir -p ~/.npm-global
-npm config set prefix '~/.npm-global'
+- Criar o: mkdir -p ~/.npm-global
+- npm config set prefix '~/.npm-global'
+- export PATH="$HOME/.npm-global/bin:$PATH"
+
+### Obrigatorio
+
+Configurar seu .bashrc, com o PATH da SDK do Android Studio.
+```bash
+vim ~/.bashrc
+```
+Adicione o PATH da SDK do Android Studio no .bashrc, geralmente é o mesmo que já está no comando:
+```bash
 export PATH="$HOME/.npm-global/bin:$PATH"
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+Dê um reload no .bashrc para atualizar:
+```bash
+source ~/.bashrc
+```
 
-(Obrigatorio)
-Abrir o tela no Android studio
+Confirme que deu certo e possui o ANDROID_HOME:
+```bash
+echo $ANDROID_HOME
+```
 
-Entrar na pasta do projeto e usar:
-npx-react-native run-android
+Agora abra a tela no Android studio
+
+Clone este repositório (se ainda não o fez):
+```bash
+git clone https://github.com/seu-usuario/studano.git
+```
+
+Navegue até a pasta do projeto que foi criada:
+```bash
+cd studano
+```
+
+Instale as libs:
+```bash
+npm i
+```
+
+Rode o Metro para dar reload no Projecto:
+```bash
+npx react-native start
+```
+Em outro terminal, rode:
+```bash
+npx react-native run-android 
+```
 
 
 
