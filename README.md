@@ -65,6 +65,14 @@ echo $ANDROID_HOME
 ```
 
 Agora abra a tela no Android studio
+Vá em Virtual Device Manager e escolha seu tamanho de tela preferido, recomendo Medium phone
+
+![image](https://github.com/user-attachments/assets/7f339997-edfb-41c1-9aea-92ab7bd6f11c)
+
+Após escolher o tamanho, rode o Android Studio, dando play no tamanho escolhido.
+
+![image](https://github.com/user-attachments/assets/c21b3ece-f6bc-427e-a5cd-8e72d2287647)
+
 
 Clone este repositório (se ainda não o fez):
 ```bash
@@ -91,6 +99,19 @@ npx react-native run-android
 ```
 
 
+## Padrão de desenvolvimento
 
+As tasks criadas estão nas Issues, mas pode ser visto pelo Projects se você possuir acesso.
 
+Quando decidido qual task deseja fazer, você deve dar Assign para você:
 
+![image](https://github.com/user-attachments/assets/d3b066b0-01ee-41f5-8b6a-0e7c0a783154)
+
+Após isso para desenvolver, recomenda-se que crie uma branch local a partir da main, colocando o nome da task, exemplo: TDEV-1
+```bash
+git checkout main
+git pull
+git checkout -b TDEV-1
+```
+
+Quando a task estiver finalizada, pode dar merge pra master, só não esqueça de manter atualizada.
