@@ -114,4 +114,4 @@ git pull
 git checkout -b TDEV-1
 ```
 
-Quando a task estiver finalizada, pode dar merge pra master, só não esqueça de manter atualizada.
+Quando a task estiver finalizada, pode dar merge pra main, só não esqueça de manter atualizada.
