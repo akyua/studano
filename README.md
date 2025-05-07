@@ -9,7 +9,7 @@
 
 ## Tecnologias
 
-- Java/JDK
+- Java/JDK >= 17
 - Android Studio
 - NodeJS
 
@@ -41,7 +41,14 @@ Necessário ter instalado as tecnologias citadas na parte de tecnologias.
 
 ### Obrigatorio
 
-Configurar seu .bashrc, com o PATH da SDK do Android Studio.
+Estar usando a versão do Java(JDK) 17 ou superior.
+Para saber sua versão basta :
+```bash
+java -version
+```
+Instale o Android Studio para continuar
+
+Depois configure seu .bashrc, com o PATH da SDK do Android Studio.
 ```bash
 vim ~/.bashrc
 ```
