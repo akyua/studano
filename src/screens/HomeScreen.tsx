@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import '../../i18n';
 import { useTranslation } from 'react-i18next';
+import menuIcon from '@/assets/menu.png';
 
 type RootStackParamList = {
   Home: undefined;
@@ -15,6 +16,12 @@ function HomeScreen({ navigation }: HomeScreenProps) {
   const { t, i18n } = useTranslation();
   return (
     <View style={styles.container}>
+    <TouchableOpacity >
+        <Image
+          source={menuIcon}
+          style={styles.icon}
+        />
+      </TouchableOpacity>
       <Text style={styles.text}>{t('welcome')}</Text>
       <Button
         title="Ir para Configurações"
