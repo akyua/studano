@@ -1,5 +1,7 @@
 {
-  "welcome": "Bem-vindo",
-  "login": "Entrar",
-  "logout": "Sair"
+  "home": {
+    "welcome": "Bem-vindo",
+    "settings": "Ir para as configurações"
+  },
+  "settings": {}
 }
