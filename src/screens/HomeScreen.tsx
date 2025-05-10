@@ -15,9 +15,9 @@ function HomeScreen({ navigation }: HomeScreenProps) {
   const { t, i18n } = useTranslation();
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{t('welcome')}</Text>
+      <Text style={styles.text}>{t('home.welcome')}</Text>
       <Button
-        title="Ir para Configurações"
+        title={t("home.settings")}
         onPress={() => navigation.navigate('Settings')}
       />
       <Button title="PT" onPress={() => i18n.changeLanguage('pt')} />

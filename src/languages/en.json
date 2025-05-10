@@ -1,5 +1,7 @@
 {
-  "welcome": "Welcome",
-  "login": "Login",
-  "logout": "Logout"
+  "home": {
+    "welcome": "Welcome",
+    "settings": "Go to settings"
+  },
+  "settings": {}
 }
