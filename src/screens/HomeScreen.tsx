@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'i18n';
 import { useTranslation } from 'react-i18next';
-import menuIcon from '@/assets/menu.png';
+import menuIcon from '@/../assets/menu.png';
+import MenuButton from '@/components/MenuButton';
 
 type RootStackParamList = {
   Home: undefined;
@@ -15,27 +16,34 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 function HomeScreen({ navigation }: HomeScreenProps) {
   const { t, i18n } = useTranslation();
   return (
-    <View style={styles.container}>
-    <TouchableOpacity >
-        <Image
-          source={menuIcon}
-          style={styles.icon}
+    <SafeAreaView style={styles.safeAreaContainer}>
+      <MenuButton />
+      <View style={styles.mainContent}>
+        <Text style={styles.text}>{t('home.welcome')}</Text>
+
+        <Button
+          title={t("home.settings")}
+          onPress={() => navigation.navigate('Settings')}
         />
-      </TouchableOpacity>
-      <Text style={styles.text}>{t('home.welcome')}</Text>
-      <Button
-        title={t("home.settings")}
-        onPress={() => navigation.navigate('Settings')}
-      />
-      <Button title="PT" onPress={() => i18n.changeLanguage('pt')} />
-      <Button title="EN" onPress={() => i18n.changeLanguage('en')} />
-    </View>
+        <Button title="PT" onPress={() => i18n.changeLanguage('pt')} />
+        <Button title="EN" onPress={() => i18n.changeLanguage('en')} />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  safeAreaContainer: {
+    flex: 1,
+  },
+
   text: { fontSize: 20, marginBottom: 20 },
+
+  mainContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default HomeScreen;
