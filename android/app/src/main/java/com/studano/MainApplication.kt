@@ -1,4 +1,4 @@
-package com.android20251
+package com.studano
 
 import android.app.Application
 import com.facebook.react.PackageList
