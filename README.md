@@ -98,7 +98,7 @@ npm i
 
 Rode o Metro para dar reload no Projecto:
 ```bash
-npx react-native start
+npx react-native start --reset-cache
 ```
 Em outro terminal, rode:
 ```bash
