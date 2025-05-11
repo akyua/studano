@@ -4,7 +4,7 @@ module.exports = {
     [
       "module-resolver",
       {
-        root: ["."],
+        root: ["./"],
         extensions: [".ios.js", ".android.js", ".js", ".ts", ".tsx", ".json"],
         alias: {
           "@": "./src",
