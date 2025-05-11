@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import '../../i18n';
+import 'i18n';
 import { useTranslation } from 'react-i18next';
 import menuIcon from '@/assets/menu.png';
 
 type RootStackParamList = {
   Home: undefined;
-  Details: { itemId: number; otherParam?: string }; 
+  Details: { itemId: number; otherParam?: string };
 };
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -22,12 +22,12 @@ function HomeScreen({ navigation }: HomeScreenProps) {
           style={styles.icon}
         />
       </TouchableOpacity>
-      <Text style={styles.text}>{t('welcome')}</Text>
+      <Text style={styles.text}>{t('home.welcome')}</Text>
       <Button
-        title="Ir para Configurações"
+        title={t("home.settings")}
         onPress={() => navigation.navigate('Settings')}
       />
-	<Button title="PT" onPress={() => i18n.changeLanguage('pt')} />
+      <Button title="PT" onPress={() => i18n.changeLanguage('pt')} />
       <Button title="EN" onPress={() => i18n.changeLanguage('en')} />
     </View>
   );
