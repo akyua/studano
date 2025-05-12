@@ -3,8 +3,8 @@ import { View, Text, Button, StyleSheet, TouchableOpacity, Image, SafeAreaView }
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'i18n';
 import { useTranslation } from 'react-i18next';
-import menuIcon from '@/../assets/menu.png';
 import MenuButton from '@/components/MenuButton';
+import StreakButton from '@/components/StreakButton';
 
 type RootStackParamList = {
   Home: undefined;
@@ -18,6 +18,7 @@ function HomeScreen({ navigation }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <MenuButton />
+      <StreakButton />
       <View style={styles.mainContent}>
         <Text style={styles.text}>{t('home.welcome')}</Text>
 
