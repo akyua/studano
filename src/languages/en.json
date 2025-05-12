@@ -1,7 +1,12 @@
 {
   "home": {
-    "welcome": "Welcome",
-    "settings": "Go to settings"
+    "title": "Home",
+    "welcome": "Welcome"
   },
-  "settings": {}
+  "settings": {
+    "title": "Settings"
+  },
+  "sidebar": {
+    "header": "Menu"
+  }
 }

@@ -1,7 +1,12 @@
 {
   "home": {
-    "welcome": "Bem-vindo",
-    "settings": "Ir para as configurações"
+    "title": "Inicio",
+    "welcome": "Bem-vindo"
   },
-  "settings": {}
+  "settings": {
+    "title": "Configurações"
+  },
+  "sidebar": {
+    "header": "Menu"
+  }
 }
