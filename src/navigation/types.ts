@@ -5,4 +5,5 @@ export type HomeStackElements = {
 export type SideBarDrawerElements = {
   Home: undefined;
   Settings: undefined;
+  Subjects: undefined;
 };

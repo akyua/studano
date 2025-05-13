@@ -4,6 +4,7 @@ import Settings from '@/screens/Settings';
 import SideBar from "@/components/SideBar";
 import { SideBarDrawerElements } from './types';
 import { HomeStackNavigator } from './HomeStackNavigator';
+import Subjects from "@/screens/Subjects"
 import { useTranslation } from 'react-i18next';
 
 const Drawer = createDrawerNavigator<SideBarDrawerElements>();
@@ -39,6 +40,16 @@ export function SideBarDrawerNavigator() {
           headerShown: true,
         }}
       />
+
+      <Drawer.Screen
+        name="Subjects"
+        component={Subjects}
+        options={{
+          title: t("subjects.title"),
+          headerShown: true,
+        }}
+      />
+
     </Drawer.Navigator>
   );
 };
