@@ -8,5 +8,9 @@
   },
   "sidebar": {
     "header": "Menu"
+  },
+  "subjects": {
+    "title": "Matérias",
+    "message": "Essa será a tela de matérias"
   }
 }

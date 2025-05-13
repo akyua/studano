@@ -8,5 +8,9 @@
   },
   "sidebar": {
     "header": "Menu"
+  },
+  "subjects": {
+    "title": "Subjects",
+    "message": "This will be the Subjects screen"
   }
 }
