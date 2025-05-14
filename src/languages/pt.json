@@ -12,5 +12,13 @@
   "subjects": {
     "title": "Matérias",
     "message": "Essa será a tela de matérias"
+  },
+  "schedules": {
+    "title": "Cronogramas",
+    "message": "Essa será a tela de cronogramas"
+  },
+  "history": {
+    "title": "Histórico",
+    "message": "Essa será a tela de histórico"
   }
 }

@@ -12,5 +12,13 @@
   "subjects": {
     "title": "Subjects",
     "message": "This will be the Subjects screen"
+  },
+  "schedules": {
+    "title": "Schedules",
+    "message": "This will be the Schedules screen"
+  },
+  "history": {
+    "title": "History",
+    "message": "This will be the History screen"
   }
 }
