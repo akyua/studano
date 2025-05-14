@@ -28,12 +28,14 @@ const SideBar = (props: DrawerContentComponentProps) => {
   ) => {
     return state.routes.map((route, index) => {
       const focused = state.index === index;
-      const label = descriptors[route.key].options.title || route.name;
+      const descriptor = descriptors[route.key];
+      const label = descriptor.options.title || route.name;
 
       return (
         <DrawerItem
           key={route.key}
           label={label}
+          icon={descriptor.options.drawerIcon}
           onPress={() => navigation.navigate(route.name)}
           focused={focused}
           activeTintColor={COLORS.activeText}
