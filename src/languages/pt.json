@@ -1,7 +1,24 @@
 {
   "home": {
-    "welcome": "Bem-vindo",
-    "settings": "Ir para as configurações"
+    "title": "Inicio",
+    "welcome": "Bem-vindo"
   },
-  "settings": {}
+  "settings": {
+    "title": "Configurações"
+  },
+  "sidebar": {
+    "header": "Menu"
+  },
+  "subjects": {
+    "title": "Matérias",
+    "message": "Essa será a tela de matérias"
+  },
+  "schedules": {
+    "title": "Cronogramas",
+    "message": "Essa será a tela de cronogramas"
+  },
+  "history": {
+    "title": "Histórico",
+    "message": "Essa será a tela de histórico"
+  }
 }
