@@ -2,14 +2,14 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import "i18n";
 import { useTranslation } from "react-i18next";
-import { SubjectsScreenProps } from "./types"
+import { HistoryScreenProps } from "./types"
 
-const Subjects = (props: SubjectsScreenProps) => {
+const History = (props: HistoryScreenProps) => {
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{t('subjects.message')}</Text>
+      <Text style={styles.text}>{t('history.message')}</Text>
     </View>
   );
 }
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Subjects;
+export default History;
