@@ -9,9 +9,10 @@
 
 ## Tecnologias
 
-- Java/JDK >= 17
+- Java/JDK 17
 - Android Studio
 - NodeJS
+- MongoDB
 
 ## Como rodar o projeto no windows
 
@@ -41,7 +42,7 @@ Necessário ter instalado as tecnologias citadas na parte de tecnologias.
 
 ### Obrigatorio
 
-Estar usando a versão do Java(JDK) 17 ou superior.
+Estar usando a versão do Java(JDK) 17.
 Para saber sua versão basta :
 ```bash
 java -version
