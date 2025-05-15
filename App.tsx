@@ -1,11 +1,17 @@
 import React from 'react';
+import "./i18n";
 import { NavigationContainer } from '@react-navigation/native';
-import AppNavigator from '@/navigation';
+import { AppNavigator } from '@/navigation/AppNavigator';
+import 'react-native-gesture-handler'
+import { StatusBar } from "react-native";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <>
+      <StatusBar hidden={true} />
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </>
   );
 }
