@@ -3,8 +3,7 @@ import { View, Text, Button, StyleSheet, TouchableOpacity, Image, SafeAreaView }
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'i18n';
 import { useTranslation } from 'react-i18next';
-import MenuButton from '@/components/MenuButton';
-import StreakButton from '@/components/StreakButton';
+import HeaderComponent from '@/components/HeaderComponent';
 
 type RootStackParamList = {
   Home: undefined;
@@ -14,20 +13,12 @@ type RootStackParamList = {
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 function HomeScreen({ navigation }: HomeScreenProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
-      <MenuButton />
-      <StreakButton />
+      <HeaderComponent />
       <View style={styles.mainContent}>
         <Text style={styles.text}>{t('home.welcome')}</Text>
-
-        <Button
-          title={t("home.settings")}
-          onPress={() => navigation.navigate('Settings')}
-        />
-        <Button title="PT" onPress={() => i18n.changeLanguage('pt')} />
-        <Button title="EN" onPress={() => i18n.changeLanguage('en')} />
       </View>
     </SafeAreaView>
   );
