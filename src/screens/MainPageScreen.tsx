@@ -4,6 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'i18n';
 import { useTranslation } from 'react-i18next';
 import HeaderComponent from '@/components/HeaderComponent';
+import Pomodoro from '@/components/PomodoroComponent';
 
 type RootStackParamList = {
   Home: undefined;
@@ -18,7 +19,7 @@ function HomeScreen({ navigation }: HomeScreenProps) {
     <SafeAreaView style={styles.safeAreaContainer}>
       <HeaderComponent />
       <View style={styles.mainContent}>
-        <Text style={styles.text}>{t('home.welcome')}</Text>
+        <Pomodoro />
       </View>
     </SafeAreaView>
   );
