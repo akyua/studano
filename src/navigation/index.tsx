@@ -1,10 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import HomeScreen from '@/screens/MainPageScreen';
+import HomeScreen from '@/screens/HomeScreen';
 import SettingsScreen from '@/screens/SettingsScreen';
 
-const Stack = createNativeStackNavigator();
+type AppStackParamList = {
+  Home: undefined;
+  Settings: undefined;
+};
+
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export default function AppNavigator() {
   return (

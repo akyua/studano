@@ -1,16 +1,18 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import 'i18n';
 import { useTranslation } from 'react-i18next';
 import HeaderComponent from '@/components/HeaderComponent';
 import Pomodoro from '@/components/PomodoroComponent';
 
-import { HomeStackElements } from '@/navigation/types';
+type AppStackParamList = {
+  Home: undefined;
+  Settings: undefined;
+};
 
-type MainScreenProps = NativeStackScreenProps<HomeStackElements, 'MainPage'>;
+type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'Home'>;
 
-function MainPageScreen({ navigation }: MainScreenProps) {
+function HomeScreen({ navigation }: HomeScreenProps) {
   const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
@@ -26,9 +28,6 @@ const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
   },
-
-  text: { fontSize: 20, marginBottom: 20 },
-
   mainContent: {
     flex: 1,
     justifyContent: 'center',
@@ -36,4 +35,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainPageScreen;
+export default HomeScreen;
