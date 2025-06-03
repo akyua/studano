@@ -5,6 +5,9 @@ import { AppNavigator } from '@/navigation/AppNavigator';
 import 'react-native-gesture-handler';
 import { StatusBar, Platform } from "react-native";
 import notifee, { AndroidImportance }  from '@notifee/react-native';
+import 'react-native-gesture-handler'
+import { StatusBar } from "react-native";
+import { RealmProvider } from '@/database/RealmContext';
 
 export default function App() {
   useEffect(() => {
@@ -29,9 +32,11 @@ export default function App() {
   return (
     <>
       <StatusBar hidden={true} />
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+      <RealmProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </RealmProvider>
     </>
   );
 }
