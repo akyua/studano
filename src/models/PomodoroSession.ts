@@ -1,21 +1,11 @@
-import Realm from "realm";
+import { Realm, BSON } from "realm";
 
-export class PomodoroSession extends Realm.Object {
-  _id!: Realm.BSON.ObjectId;
+export class PomodoroSession extends Realm.Object<PomodoroSession> {
+  _id: BSON.ObjectId = new BSON.ObjectId();
   startTime!: Date;
-  endTime!: Date;
+  endTime?: Date;
   duration!: number;
   completed!: boolean;
 
-  static schema = {
-    name: "PomodoroSession",
-    primaryKey: "_id",
-    properties: {
-      _id: "objectId",
-      startTime: "date",
-      endTime: "date",
-      duration: "int",
-      completed: "bool",
-    },
-  };
+  static primaryKey = "_id";
 }

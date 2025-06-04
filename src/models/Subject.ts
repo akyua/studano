@@ -1,18 +1,10 @@
-import Realm from "realm";
+import { Realm, BSON } from "realm";
 import { PomodoroSession } from "./PomodoroSession";
 
-export class Subject extends Realm.Object {
-  _id!: Realm.BSON.ObjectId;
+export class Subject extends Realm.Object<Subject> {
+  _id: BSON.ObjectId = new BSON.ObjectId();
   name!: string;
   sessions!: Realm.List<PomodoroSession>;
 
-  static schema = {
-    name: "Subject",
-    primaryKey: "_id",
-    properties: {
-      _id: "objectId",
-      name: "string",
-      sessions: "PomodoroSession[]",
-    },
-  };
+  static primaryKey = "_id";
 }
