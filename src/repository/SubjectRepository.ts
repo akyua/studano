@@ -1,12 +1,13 @@
 import { Realm } from "realm";
 import { Subject } from "../models/Subject";
 import { PomodoroSession } from "../models/PomodoroSession";
+import { useRealm } from "@/database/RealmContext";
 
 export class SubjectRepository {
   realm: Realm;
 
-  constructor(realm: Realm) {
-    this.realm = realm;
+  constructor() {
+    this.realm = useRealm();
   }
 
   create(name: string, color: string): Subject {

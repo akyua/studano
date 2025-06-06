@@ -1,11 +1,12 @@
 import { Realm } from "realm";
 import { PomodoroSession } from "../models/PomodoroSession";
+import { useRealm } from "@/database/RealmContext";
 
 export class PomodoroSessionRepository {
   realm: Realm;
 
-  constructor(realm: Realm) {
-    this.realm = realm;
+  constructor() {
+    this.realm = useRealm();
   }
 
   create(duration: number): PomodoroSession {
