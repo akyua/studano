@@ -11,7 +11,13 @@
   },
   "subjects": {
     "title": "Subjects",
-    "message": "This will be the Subjects screen"
+    "message": "This will be the Subjects screen",
+    "searchPlaceholder": "Search subjects...",
+    "addSubjectButton": "Add Subject",
+    "addSubjectModalTitle": "New Subject",
+    "subjectNamePlaceholder": "Subject name",
+    "cancelButton": "Cancel",
+    "addButton": "Add"
   },
   "schedules": {
     "title": "Schedules",
