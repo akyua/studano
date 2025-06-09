@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Alert,
 } from 'react-native';
 import "i18n";
 import { useTranslation } from "react-i18next";
@@ -26,12 +27,9 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const [subjects, setSubjects] = useState([
     { id: '1', name: 'Work' },
     { id: '2', name: 'Study' },
-    { id: '3', name: 'Social' },
-    { id: '4', name: 'Rest' },
-    { id: '5', name: 'Entertainment' },
-    { id: '6', name: 'Other' },
-    { id: '7', name: 'Sport' },
+    { id: '3', name: 'Rest' },
   ]);
+  const [editingSubject, setEditingSubject] = useState<{ id: string; name: string } | null>(null);
 
   const handleAddSubject = () => {
     if (newSubject.trim() !== '') {
@@ -41,15 +39,70 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
     }
   };
 
+  const handleEditSubject = (subject: { id: string; name: string }) => {
+    setEditingSubject(subject);
+    setNewSubject(subject.name);
+    setModalVisible(true);
+  };
+
+  const handleUpdateSubject = () => {
+    if (editingSubject && newSubject.trim() !== '') {
+      setSubjects(
+        subjects.map(subject =>
+          subject.id === editingSubject.id ? { ...subject, name: newSubject.trim() } : subject
+        )
+      );
+      setNewSubject('');
+      setEditingSubject(null);
+      setModalVisible(false);
+    }
+  };
+
+  const handleDeleteSubject = (subjectToDelete: { id: string; name: string }) => {
+    const message = `Are you sure you want to delete '${subjectToDelete.name}'?`; 
+    Alert.alert(
+      t('subjects.deleteConfirmationTitle'),
+      message,
+      [
+        {
+          text: t('subjects.cancelButton'),
+          style: 'cancel',
+        },
+        {
+          text: t('subjects.deleteButton'),
+          onPress: () => {
+            setSubjects(subjects.filter(subject => subject.id !== subjectToDelete.id));
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   const filteredSubjects = subjects.filter(subject =>
     subject.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const renderItem = ({ item }: { item: { id: string; name: string } }) => (
-    <TouchableOpacity style={styles.subjectItem}>
+    <View style={styles.subjectItem}>
       <View style={styles.subjectBullet} />
       <Text style={styles.subjectName}>{item.name}</Text>
-    </TouchableOpacity>
+      <View style={styles.subjectActions}>
+        <TouchableOpacity onPress={() => handleEditSubject(item)} style={styles.actionButton}>
+          <Image
+            source={require('@/../assets/images/edit.png')} 
+            style={[styles.actionIcon, { tintColor: '#007AFF' }]} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleDeleteSubject(item)} style={styles.actionButton}>
+          <Image
+            source={require('@/../assets/images/delete.png')} 
+            style={[styles.actionIcon, { tintColor: '#FF3B30' }]} 
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 
   return (
@@ -75,7 +128,14 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
             />
           </View>
 
-          <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => {
+              setEditingSubject(null);
+              setNewSubject(''); 
+              setModalVisible(true);
+            }}
+          >
             <Image
               source={require('@/../assets/images/plus.png')}
               style={styles.icon}
@@ -96,11 +156,17 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
           animationType="fade"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
+          onRequestClose={() => {
+            setModalVisible(false);
+            setEditingSubject(null);
+            setNewSubject(''); 
+          }}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalTitle}>{t('subjects.addSubjectModalTitle')}</Text>
+              <Text style={styles.modalTitle}>
+                {editingSubject ? t('subjects.editSubjectModalTitle') : t('subjects.addSubjectModalTitle')}
+              </Text>
               <TextInput
                 style={styles.modalInput}
                 placeholder={t('subjects.subjectNamePlaceholder')}
@@ -111,15 +177,21 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonCancel]}
-                  onPress={() => setModalVisible(false)}
+                  onPress={() => {
+                    setModalVisible(false);
+                    setEditingSubject(null); 
+                    setNewSubject('');
+                  }}
                 >
                   <Text style={styles.buttonText}>{t('subjects.cancelButton')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonAdd]}
-                  onPress={handleAddSubject}
+                  onPress={editingSubject ? handleUpdateSubject : handleAddSubject}
                 >
-                  <Text style={styles.buttonText}>{t('subjects.addButton')}</Text>
+                  <Text style={styles.buttonText}>
+                    {editingSubject ? t('subjects.updateButton') : t('subjects.addButton')}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -183,6 +255,7 @@ const styles = StyleSheet.create({
   subjectItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between', 
     paddingVertical: 12,
     paddingHorizontal: 12,
     backgroundColor: '#FFF',
@@ -201,9 +274,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     marginRight: 12,
   },
+  subjectName: {
+    flex: 1, 
+    color: 'black',
+    fontSize: 16,
+  },
+  subjectActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    marginLeft: 15, 
+    padding: 5, 
+  },
+  actionIcon: {
+    width: 20,
+    height: 20,
+  },
   separator: {
-    height: 1,
-    backgroundColor: '#EEEEEE',
+    height: 0, 
   },
   centeredView: {
     flex: 1,
