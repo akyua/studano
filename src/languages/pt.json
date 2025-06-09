@@ -11,7 +11,18 @@
   },
   "subjects": {
     "title": "Matérias",
-    "message": "Essa será a tela de matérias"
+    "message": "Essa será a tela de matérias",
+    "searchPlaceholder": "Buscar matérias...",
+    "addSubjectButton": "Adicionar Matéria",
+    "addSubjectModalTitle": "Adicionar Nova Matéria",
+    "editSubjectModalTitle": "Editar Matéria",
+    "subjectNamePlaceholder": "Nome da Matéria",
+    "cancelButton": "Cancelar",
+    "addButton": "Adicionar",
+    "updateButton": "Atualizar",
+    "deleteButton": "Remover",
+    "deleteConfirmationTitle": "Confirmar Exclusão",
+    "deleteConfirmationMessage": "Tem certeza que deseja remover '{subjectName}'?"
   },
   "schedules": {
     "title": "Cronogramas",

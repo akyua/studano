@@ -11,7 +11,18 @@
   },
   "subjects": {
     "title": "Subjects",
-    "message": "This will be the Subjects screen"
+    "message": "This will be the Subjects screen",
+    "searchPlaceholder": "Search subjects...",
+    "addSubjectButton": "Add Subject",
+    "editSubjectModalTitle": "Edit Subject",
+    "addSubjectModalTitle": "New Subject",
+    "subjectNamePlaceholder": "Subject name",
+    "cancelButton": "Cancel",
+    "addButton": "Add",
+    "updateButton": "Update",
+    "deleteButton": "Delete",
+    "deleteConfirmationTitle": "Confirm Deletion",
+    "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?"
   },
   "schedules": {
     "title": "Schedules",
