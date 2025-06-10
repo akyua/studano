@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "dev:android": "concurrently --raw \"npm run start\" \"npm run android\"",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
@@ -17,8 +18,8 @@
     "@react-navigation/drawer": "^7.3.11",
     "@react-navigation/native": "^7.1.8",
     "@react-navigation/native-stack": "^7.3.12",
-    "expo": "^53.0.11",
     "@realm/react": "^0.11.0",
+    "expo": "^53.0.11",
     "i18next": "^25.1.2",
     "i18next-browser-languagedetector": "^8.1.0",
     "i18next-http-backend": "^3.0.2",
@@ -32,7 +33,7 @@
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "^4.10.0",
     "react-native-svg": "^15.12.0",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
     "realm": "^20.1.0"
   },
   "devDependencies": {
@@ -43,7 +44,6 @@
     "@babel/runtime": "^7.25.0",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
-    "@react-native-community/cli-platform-ios": "15.0.1",
     "@react-native/babel-preset": "0.78.1",
     "@react-native/eslint-config": "0.78.1",
     "@react-native/metro-config": "0.78.1",
@@ -53,6 +53,7 @@
     "@types/react": "^19.0.0",
     "@types/react-test-renderer": "^19.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
+    "concurrently": "^9.1.2",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-import-resolver-babel-module": "^5.3.2",
