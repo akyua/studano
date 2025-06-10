@@ -1,45 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { usePomodoroTimer, PomodoroTimerResult } from '@/hooks/usePomodoroTimer';
 
 const RADIUS = 80;
 const STROKE_WIDTH = 8;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-const FULL_TIME = 25 * 60;
 
 export default function Pomodoro() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(FULL_TIME);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const {
+    isRunning,
+    formattedTime,
+    progress,
+    toggleTimer,
+    resetTimer,
+  }: PomodoroTimerResult = usePomodoroTimer();
 
-  useEffect(() => {
-    if (isRunning) {
-      intervalRef.current = setInterval(() => {
-        setSecondsLeft((sec) => {
-          if (sec === 0) {
-            clearInterval(intervalRef.current!);
-            setIsRunning(false);
-            return FULL_TIME;
-          }
-          return sec - 1;
-        });
-      }, 1000);
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isRunning]);
-
-  const progress = secondsLeft / FULL_TIME;
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-
-  const formatTime = (secs: number) => {
-    const minutes = Math.floor(secs / 60).toString().padStart(2, '0');
-    const seconds = (secs % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  };
 
   return (
     <View style={styles.container}>
@@ -68,16 +45,23 @@ export default function Pomodoro() {
             originY={RADIUS + STROKE_WIDTH}
           />
         </Svg>
-
-        <Text style={styles.timer}>{formatTime(secondsLeft)}</Text>
+        <Text style={styles.timer}>{formattedTime}</Text>
       </View>
 
       <TouchableOpacity
-        onPress={() => setIsRunning(!isRunning)}
+        onPress={toggleTimer}
         style={styles.button}
       >
         <Text style={styles.buttonText}>{isRunning ? 'Pause' : 'Start'}</Text>
       </TouchableOpacity>
+      {
+        <TouchableOpacity
+          onPress={resetTimer}
+          style={[styles.button, { marginTop: 10, backgroundColor: '#666' }]}
+        >
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
+      }
     </View>
   );
 }
