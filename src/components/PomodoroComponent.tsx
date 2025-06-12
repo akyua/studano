@@ -1,3 +1,4 @@
+// src/components/PomodoroComponent.tsx
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -14,6 +15,8 @@ export default function Pomodoro() {
     progress,
     toggleTimer,
     resetTimer,
+    secondsLeft,
+    initialTime,
   }: PomodoroTimerResult = usePomodoroTimer();
 
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
@@ -48,20 +51,23 @@ export default function Pomodoro() {
         <Text style={styles.timer}>{formattedTime}</Text>
       </View>
 
-      <TouchableOpacity
-        onPress={toggleTimer}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>{isRunning ? 'Pause' : 'Start'}</Text>
-      </TouchableOpacity>
-      {
+      <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          onPress={resetTimer}
-          style={[styles.button, { marginTop: 10, backgroundColor: '#666' }]}
+          onPress={toggleTimer}
+          style={styles.button}
         >
-          <Text style={styles.buttonText}>Reset</Text>
+          <Text style={styles.buttonText}>{isRunning ? 'Pause' : 'Start'}</Text>
         </TouchableOpacity>
-      }
+        {secondsLeft < initialTime && (
+          <TouchableOpacity
+            onPress={resetTimer}
+            style={[styles.button, { marginLeft: 10, backgroundColor: '#666' }]}
+          >
+            <Text style={styles.buttonText}>Reset</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
     </View>
   );
 }
@@ -78,6 +84,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: RADIUS * 2 + STROKE_WIDTH * 2,
     height: RADIUS * 2 + STROKE_WIDTH * 2,
+    marginBottom: 40,
   },
   timer: {
     position: 'absolute',
@@ -86,15 +93,19 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   button: {
-    marginTop: 40,
     backgroundColor: '#000',
     borderRadius: 30,
     paddingVertical: 12,
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
   },
+  buttonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  }
 });

@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 
-const FULL_TIME = 25 * 60;
+const FULL_TIME = 1 * 60;
 
-export interface PomodoroTimerResult {
+export type PomodoroTimerResult = {
   secondsLeft: number;
   isRunning: boolean;
   formattedTime: string;
   progress: number;
+  initialTime: number;
   toggleTimer: () => void;
   resetTimer: () => void;
-}
+};
 
-export const usePomodoroTimer = (initialTime: number = FULL_TIME): PomodoroTimerResult => {
-  const [secondsLeft, setSecondsLeft] = useState(initialTime);
+export const usePomodoroTimer = (initialTimeParam: number = FULL_TIME): PomodoroTimerResult => {
+  const [secondsLeft, setSecondsLeft] = useState(initialTimeParam);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,7 +24,7 @@ export const usePomodoroTimer = (initialTime: number = FULL_TIME): PomodoroTimer
           if (sec === 0) {
             clearInterval(intervalRef.current!);
             setIsRunning(false);
-            return initialTime;
+            return initialTimeParam;
           }
           return sec - 1;
         });
@@ -34,7 +35,7 @@ export const usePomodoroTimer = (initialTime: number = FULL_TIME): PomodoroTimer
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isRunning, initialTime]);
+  }, [isRunning, initialTimeParam]);
 
   const toggleTimer = () => {
     setIsRunning(!isRunning);
@@ -43,7 +44,7 @@ export const usePomodoroTimer = (initialTime: number = FULL_TIME): PomodoroTimer
   const resetTimer = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     setIsRunning(false);
-    setSecondsLeft(initialTime);
+    setSecondsLeft(initialTimeParam);
   };
 
   const formatTime = (secs: number): string => {
@@ -54,13 +55,14 @@ export const usePomodoroTimer = (initialTime: number = FULL_TIME): PomodoroTimer
     return `${minutes}:${seconds}`;
   };
 
-  const progress = secondsLeft / initialTime;
+  const progress = secondsLeft / initialTimeParam;
 
   return {
     secondsLeft,
     isRunning,
     formattedTime: formatTime(secondsLeft),
     progress,
+    initialTime: initialTimeParam,
     toggleTimer,
     resetTimer,
   };
