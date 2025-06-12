@@ -25,8 +25,13 @@
     "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?"
   },
   "schedules": {
-    "title": "Schedules",
-    "message": "This will be the Schedules screen"
+    "title": "Schedule",
+    "selectDays": "Select Days",
+    "selectTime": "Select Time",
+    "timeNotification": "Time notification:",
+    "timeNotificationPlaceholder": "12:00 AM",
+    "receiveNotifications": "Receive notifications",
+    "save": "Save Schedule"
   },
   "history": {
     "title": "History",
