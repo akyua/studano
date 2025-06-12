@@ -1,5 +1,5 @@
 import { Realm } from "realm";
-import { PomodoroSession } from "../models/PomodoroSession";
+import { PomodoroSession } from "@/models/PomodoroSession";
 import { useRealm } from "@/database/RealmContext";
 
 export class PomodoroSessionRepository {
