@@ -31,7 +31,15 @@
     "timeNotification": "Time notification:",
     "timeNotificationPlaceholder": "12:00 AM",
     "receiveNotifications": "Receive notifications",
-    "save": "Save Schedule"
+    "save": "Save Schedule",
+    "saveSuccessTitle": "Schedule Saved",
+    "saveSuccessBody": "Your notification preferences have been saved.",
+    "saveErrorTitle": "Error",
+    "saveErrorBody": "Could not save the schedule. Please try again."
+  },
+  "notification": {
+    "title": "Study Reminder",
+    "body": "It's time for your scheduled study session!"
   },
   "history": {
     "title": "History",

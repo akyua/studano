@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Platform, Modal } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert } from "react-native";
 import "i18n";
 import { useTranslation } from "react-i18next";
 import { SchedulesScreenProps } from "./types";
@@ -7,42 +7,51 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderComponent from '@/components/HeaderComponent';
 import DaySelector from '@/components/DaySelector';
 import CustomTimePickerModal from '@/components/CustomTimePickerModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { scheduleWeeklyNotifications } from '@/services/notificationService';
 
-// Dados dos dias da semana para Inglês (Padrão)
 const daysOfWeekDataEnglish = [
-  { id: 'sun', abbr: 'S' }, // Sunday
-  { id: 'mon', abbr: 'M' }, // Monday
-  { id: 'tue', abbr: 'T' }, // Tuesday
-  { id: 'wed', abbr: 'W' }, // Wednesday
-  { id: 'thu', abbr: 'T' }, // Thursday
-  { id: 'fri', abbr: 'F' }, // Friday
-  { id: 'sat', abbr: 'S' }, // Saturday
+  { id: 'sun', abbr: 'S' }, { id: 'mon', abbr: 'M' }, { id: 'tue', abbr: 'T' },
+  { id: 'wed', abbr: 'W' }, { id: 'thu', abbr: 'T' }, { id: 'fri', abbr: 'F' },
+  { id: 'sat', abbr: 'S' },
 ];
 
-// Dados dos dias da semana para Português
 const daysOfWeekDataPortuguese = [
-  { id: 'sun', abbr: 'D' }, // Domingo
-  { id: 'mon', abbr: 'S' }, // Segunda
-  { id: 'tue', abbr: 'T' }, // Terça
-  { id: 'wed', abbr: 'Q' }, // Quarta
-  { id: 'thu', abbr: 'Q' }, // Quinta
-  { id: 'fri', abbr: 'S' }, // Sexta
-  { id: 'sat', abbr: 'S' }, // Sábado
+  { id: 'sun', abbr: 'D' }, { id: 'mon', abbr: 'S' }, { id: 'tue', abbr: 'T' },
+  { id: 'wed', abbr: 'Q' }, { id: 'thu', abbr: 'Q' }, { id: 'fri', abbr: 'S' },
+  { id: 'sat', abbr: 'S' },
 ];
+
+const SCHEDULE_STORAGE_KEY = '@YourApp:Schedule';
 
 const SchedulesScreen = (props: SchedulesScreenProps) => {
   const { t, i18n } = useTranslation();
   const isPortuguese = i18n.language === 'pt';
-
-  const currentDaysOfWeekData = isPortuguese
-    ? daysOfWeekDataPortuguese
-    : daysOfWeekDataEnglish;
+  const currentDaysOfWeekData = isPortuguese ? daysOfWeekDataPortuguese : daysOfWeekDataEnglish;
 
   const [selectedDayIds, setSelectedDayIds] = useState<string[]>([]);
   const [notificationTime, setNotificationTime] = useState<Date | undefined>(undefined);
   const [receiveNotifications, setReceiveNotifications] = useState<boolean>(false);
-
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
+
+  useEffect(() => {
+    const loadSchedule = async () => {
+      try {
+        const savedScheduleJSON = await AsyncStorage.getItem(SCHEDULE_STORAGE_KEY);
+        if (savedScheduleJSON !== null) {
+          const savedSchedule = JSON.parse(savedScheduleJSON);
+          setSelectedDayIds(savedSchedule.selectedDayIds || []);
+          setReceiveNotifications(savedSchedule.receiveNotifications || false);
+          if (savedSchedule.notificationTime) {
+            setNotificationTime(new Date(savedSchedule.notificationTime));
+          }
+        }
+      } catch (error) {
+        // Failed to load schedule silently
+      }
+    };
+    loadSchedule();
+  }, []);
 
   const handleDayToggle = (dayId: string) => {
     setSelectedDayIds(prevDayIds =>
@@ -66,13 +75,37 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
     setIsTimePickerVisible(false);
   };
 
+  const handleSaveSchedule = async () => {
+    const scheduleData = {
+      selectedDayIds,
+      notificationTime,
+      receiveNotifications,
+    };
+    try {
+      await AsyncStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(scheduleData));
+      await scheduleWeeklyNotifications(
+        scheduleData.selectedDayIds,
+        scheduleData.notificationTime,
+        scheduleData.receiveNotifications
+      );
+      Alert.alert(
+        t('schedules.saveSuccessTitle', 'Schedule Saved'),
+        t('schedules.saveSuccessBody', 'Your notification preferences have been saved.')
+      );
+    } catch (error) {
+      Alert.alert(
+        t('schedules.saveErrorTitle', 'Error'),
+        t('schedules.saveErrorBody', 'Could not save the schedule. Please try again.')
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <HeaderComponent />
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>{t("schedules.selectDays")}</Text>
         <View style={styles.daysContainer}>
-          {/* Usa o conjunto de dados selecionado */}
           {currentDaysOfWeekData.map((day) => (
             <DaySelector
               key={day.id}
@@ -91,7 +124,7 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
             onPress={() => setIsTimePickerVisible(true)}
           >
             <Text style={notificationTime ? styles.selectedTimeText : styles.placeholderText}>
-              {formatTimeDisplay(notificationTime, t("schedules.timeNotificationPlaceholder"))}
+              {formatTimeDisplay(notificationTime, t("schedules.timeNotificationPlaceholder", "12:00 AM"))}
             </Text>
           </TouchableOpacity>
         </View>
@@ -107,8 +140,8 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>{t("schedules.save")}</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveSchedule}>
+          <Text style={styles.saveButtonText}>{t("schedules.save", "Save Schedule")}</Text>
         </TouchableOpacity>
 
         <CustomTimePickerModal
@@ -118,7 +151,6 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
           initialTime={notificationTime || new Date()}
           use12HourFormat={!isPortuguese}
         />
-
       </View>
     </SafeAreaView>
   );
