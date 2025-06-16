@@ -12,7 +12,12 @@
     "version": "Version"
   },
   "sidebar": {
-    "header": "Menu"
+    "header": "Menu",
+    "home": "Home",
+    "settings": "Settings",
+    "subjects": "Subjects",
+    "schedules": "Schedules",
+    "history": "History"
   },
   "subjects": {
     "title": "Subjects",
