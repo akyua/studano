@@ -4,7 +4,12 @@
     "welcome": "Bem-vindo"
   },
   "settings": {
-    "title": "Configurações"
+    "title": "Configurações",
+    "languageSelectionTitle": "Seleção de Idioma",
+    "aboutStudanoTitle": "Sobre o Studano",
+    "whatIs": "O que é?",
+    "whatIsDescription": "O Studano é um aplicativo projetado para te ajudar a organizar sua rotina de estudos e manter o foco em seus objetivos.",
+    "version": "Versão"
   },
   "sidebar": {
     "header": "Menu"

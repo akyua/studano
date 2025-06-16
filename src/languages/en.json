@@ -4,7 +4,12 @@
     "welcome": "Welcome"
   },
   "settings": {
-    "title": "Settings"
+    "title": "Settings",
+    "languageSelectionTitle": "Select Language",
+    "aboutStudanoTitle": "About Studano",
+    "whatIs": "What is it?",
+    "whatIsDescription": "Studano is an app designed to help you organize your study routine and stay on track with your goals.",
+    "version": "Version"
   },
   "sidebar": {
     "header": "Menu"
