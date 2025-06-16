@@ -31,7 +31,15 @@
     "timeNotification": "Hora da notificação:",
     "timeNotificationPlaceholder": "00:00",
     "receiveNotifications": "Receber notificação",
-    "save": "Salvar Cronograma"
+    "save": "Salvar Cronograma",
+    "saveSuccessTitle": "Agendamento Salvo",
+    "saveSuccessBody": "Suas preferências de notificação foram salvas.",
+    "saveErrorTitle": "Erro",
+    "saveErrorBody": "Não foi possível salvar o agendamento. Tente novamente."
+  },
+  "notification": {
+    "title": "Lembrete de Estudo",
+    "body": "Está na hora da sua sessão de estudos agendada!"
   },
   "history": {
     "title": "Histórico",
