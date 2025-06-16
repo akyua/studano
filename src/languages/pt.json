@@ -12,7 +12,12 @@
     "version": "Versão"
   },
   "sidebar": {
-    "header": "Menu"
+    "header": "Menu",
+    "home": "Início",
+    "settings": "Configurações",
+    "subjects": "Matérias",
+    "schedules": "Horários",
+    "history": "Histórico"
   },
   "subjects": {
     "title": "Matérias",

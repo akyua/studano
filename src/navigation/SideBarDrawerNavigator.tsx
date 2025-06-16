@@ -37,7 +37,7 @@ export function SideBarDrawerNavigator() {
         name="Home"
         component={HomeStackNavigator}
         options={{
-          title: t(""),
+          title: t("sidebar.home"),
           drawerIcon: ({ color, size }) => {
             return <HomeIcon color={color} size={size} />
           }
@@ -48,7 +48,7 @@ export function SideBarDrawerNavigator() {
         name="Settings"
         component={Settings}
         options={{
-          title: t(""),
+          title: t("sidebar.settings"),
           drawerIcon: ({ color, size }) => {
             return <SettingsIcon color={color} size={size} />
           }
@@ -59,7 +59,7 @@ export function SideBarDrawerNavigator() {
         name="Subjects"
         component={Subjects}
         options={{
-          title: t(""),
+          title: t("sidebar.subjects"),
           drawerIcon: ({ color, size }) => {
             return <BookIcon color={color} size={size} />
           }
@@ -70,7 +70,7 @@ export function SideBarDrawerNavigator() {
         name="Schedules"
         component={Schedules}
         options={{
-          title: t(""),
+          title: t("sidebar.schedules"),
           drawerIcon: ({ color, size }) => {
             return <ClockIcon color={color} size={size} />
           }
@@ -81,7 +81,7 @@ export function SideBarDrawerNavigator() {
         name="History"
         component={History}
         options={{
-          title: t(""),
+          title: t("sidebar.history"),
           drawerIcon: ({ color, size }) => {
             return <HistoryIcon color={color} size={size} />
           }
