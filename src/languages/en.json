@@ -45,7 +45,16 @@
     "saveSuccessTitle": "Schedule Saved",
     "saveSuccessBody": "Your notification preferences have been saved.",
     "saveErrorTitle": "Error",
-    "saveErrorBody": "Could not save the schedule. Please try again."
+    "saveErrorBody": "Could not save the schedule. Please try again.",
+    "days": {
+      "sun": "S",
+      "mon": "M",
+      "tue": "T",
+      "wed": "W",
+      "thu": "T",
+      "fri": "F",
+      "sat": "S"
+    }
   },
   "notification": {
     "title": "Study Reminder",
