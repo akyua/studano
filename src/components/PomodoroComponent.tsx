@@ -67,7 +67,6 @@ export default function Pomodoro() {
           </TouchableOpacity>
         )}
       </View>
-
     </View>
   );
 }

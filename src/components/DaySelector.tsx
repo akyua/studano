@@ -1,26 +1,50 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-interface DaySelectorProps {
-  day: string; // Isso será a abreviação (ex: 'S', 'M')
-  isSelected: boolean;
-  onPress: () => void;
+interface DayData {
+  id: string;
+  day: string;
 }
 
-const DaySelector: React.FC<DaySelectorProps> = ({ day, isSelected, onPress }) => {
+interface DaySelectorProps {
+  days: DayData[];
+  selectedDayIds: string[];
+  onDayToggle: (dayId: string) => void;
+}
+
+const DaySelector: React.FC<DaySelectorProps> = ({ days, selectedDayIds, onDayToggle }) => {
   return (
-    <TouchableOpacity
-      style={[styles.dayButton, isSelected ? styles.selectedDayButton : styles.unselectedDayButton]}
-      onPress={onPress}
-    >
-      <Text style={[styles.dayText, isSelected ? styles.selectedDayText : styles.unselectedDayText]}>
-        {day}
-      </Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      {days.map((day) => (
+        <TouchableOpacity
+          key={day.id}
+          style={[
+            styles.dayButton,
+            selectedDayIds.includes(day.id) ? styles.selectedDayButton : styles.unselectedDayButton,
+          ]}
+          onPress={() => onDayToggle(day.id)}
+        >
+          <Text
+            style={[
+              styles.dayText,
+              selectedDayIds.includes(day.id) ? styles.selectedDayText : styles.unselectedDayText,
+            ]}
+          >
+            {day.day}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+    paddingHorizontal: 10,
+  },
   dayButton: {
     width: 40,
     height: 40,
@@ -29,6 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
+    marginHorizontal: 4,
   },
   selectedDayButton: {
     backgroundColor: '#000',

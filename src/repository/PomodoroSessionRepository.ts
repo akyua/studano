@@ -1,6 +1,7 @@
 import { Realm } from "realm";
 import { PomodoroSession } from "@/models/PomodoroSession";
 import { useRealm } from "@/database/RealmContext";
+import { DatabaseLogger } from "@/utils/databaseLogger";
 
 export class PomodoroSessionRepository {
   realm: Realm;
@@ -10,21 +11,35 @@ export class PomodoroSessionRepository {
   }
 
   create(duration: number, subjectId?: Realm.BSON.ObjectId): PomodoroSession {
+    const request = { duration, subjectId: subjectId?.toString() || "null" };
     const now = new Date();
     let session!: PomodoroSession;
 
-    this.realm.write(() => {
-      session = this.realm.create<PomodoroSession>("PomodoroSession", {
-        _id: new Realm.BSON.ObjectId(),
-        startTime: now,
-        endTime: new Date(now.getTime() + duration * 1000),
-        duration,
-        completed: false,
-        subjectId,
+    try {
+      this.realm.write(() => {
+        session = this.realm.create<PomodoroSession>("PomodoroSession", {
+          _id: new Realm.BSON.ObjectId(),
+          startTime: now,
+          endTime: new Date(now.getTime() + duration * 1000),
+          duration,
+          completed: false,
+          subjectId,
+        });
       });
-    });
 
-    return session;
+      const result = {
+        id: session._id.toString(),
+        startTime: session.startTime,
+        duration: session.duration,
+        subjectId: session.subjectId?.toString() || "null",
+      };
+
+      DatabaseLogger.logOperation("PomodoroSession", "create", request, result);
+      return session;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "create", request, undefined, error);
+      throw error;
+    }
   }
 
   createForSubject(duration: number, subjectId: Realm.BSON.ObjectId): PomodoroSession {
@@ -36,42 +51,109 @@ export class PomodoroSessionRepository {
   }
 
   complete(sessionId: Realm.BSON.ObjectId): PomodoroSession | null {
-    const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+    const request = { sessionId: sessionId.toString() };
 
-    if (session) {
-      this.realm.write(() => {
-        session.completed = true;
-        session.endTime = new Date();
-      });
-      return session;
+    try {
+      const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+
+      if (session) {
+        this.realm.write(() => {
+          session.completed = true;
+          session.endTime = new Date();
+        });
+
+        const result = {
+          id: session._id.toString(),
+          completed: session.completed,
+          endTime: session.endTime,
+        };
+
+        DatabaseLogger.logOperation("PomodoroSession", "complete", request, result);
+        return session;
+      }
+
+      DatabaseLogger.logOperation("PomodoroSession", "complete", request, null);
+      return null;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "complete", request, undefined, error);
+      throw error;
     }
-
-    return null;
   }
 
   delete(sessionId: Realm.BSON.ObjectId): boolean {
-    const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+    const request = { sessionId: sessionId.toString() };
 
-    if (session) {
-      this.realm.write(() => {
-        this.realm.delete(session);
-      });
-      return true;
+    try {
+      const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+
+      if (session) {
+        this.realm.write(() => {
+          this.realm.delete(session);
+        });
+
+        DatabaseLogger.logOperation("PomodoroSession", "delete", request, { success: true });
+        return true;
+      }
+
+      DatabaseLogger.logOperation("PomodoroSession", "delete", request, { success: false });
+      return false;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "delete", request, undefined, error);
+      throw error;
     }
-
-    return false;
   }
 
   getAll() {
-    return this.realm.objects<PomodoroSession>("PomodoroSession");
+    try {
+      const sessions = this.realm.objects<PomodoroSession>("PomodoroSession");
+      const result = { count: sessions.length };
+
+      DatabaseLogger.logOperation("PomodoroSession", "getAll", undefined, result);
+      return sessions;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "getAll", undefined, undefined, error);
+      throw error;
+    }
   }
 
   getById(sessionId: Realm.BSON.ObjectId): PomodoroSession | null {
-    return this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+    const request = { sessionId: sessionId.toString() };
+
+    try {
+      const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+
+      if (session) {
+        const result = {
+          id: session._id.toString(),
+          startTime: session.startTime,
+          completed: session.completed,
+        };
+
+        DatabaseLogger.logOperation("PomodoroSession", "getById", request, result);
+      } else {
+        DatabaseLogger.logOperation("PomodoroSession", "getById", request, null);
+      }
+
+      return session;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "getById", request, undefined, error);
+      throw error;
+    }
   }
 
   getCompleted() {
-    return this.realm.objects<PomodoroSession>("PomodoroSession").filtered("completed = true");
+    try {
+      const sessions = this.realm
+        .objects<PomodoroSession>("PomodoroSession")
+        .filtered("completed = true");
+      const result = { count: sessions.length };
+
+      DatabaseLogger.logOperation("PomodoroSession", "getCompleted", undefined, result);
+      return sessions;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "getCompleted", undefined, undefined, error);
+      throw error;
+    }
   }
 
   getBySubject(subjectId: Realm.BSON.ObjectId) {

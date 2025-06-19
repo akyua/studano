@@ -25,9 +25,7 @@ export default function App() {
             importance: AndroidImportance.HIGH,
           });
         }
-        console.log("funcionando as notificações")
       } catch (error) {
-        console.error("Falha na config das notificações")
       }
     }
     setupNotifications();

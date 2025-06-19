@@ -1,6 +1,7 @@
 import { Realm, BSON } from "realm";
 import { User } from "@/models/User";
 import { useRealm } from "@/database/RealmContext";
+import { DatabaseLogger } from "@/utils/databaseLogger";
 
 export class UserRepository {
   realm: Realm;
@@ -10,19 +11,53 @@ export class UserRepository {
   }
 
   create(username: string): User {
-    let user!: User;
-    this.realm.write(() => {
-      user = this.realm.create<User>("User", {
-        username,
-        subjects: [],
+    const request = { username };
+
+    try {
+      let user!: User;
+      this.realm.write(() => {
+        user = this.realm.create<User>("User", {
+          username,
+          subjects: [],
+        });
       });
-    });
-    return user;
+
+      const result = {
+        id: user._id.toString(),
+        username: user.username,
+        subjectsCount: user.subjects.length,
+      };
+
+      DatabaseLogger.logOperation("User", "create", request, result);
+      return user;
+    } catch (error) {
+      DatabaseLogger.logOperation("User", "create", request, undefined, error);
+      throw error;
+    }
   }
 
   getCurrentUser(): User | null {
-    const users = this.realm.objects<User>("User");
-    return users.length > 0 ? users[0] : null;
+    try {
+      const users = this.realm.objects<User>("User");
+
+      if (users.length > 0) {
+        const user = users[0];
+        const result = {
+          id: user._id.toString(),
+          username: user.username,
+          subjectsCount: user.subjects.length,
+        };
+
+        DatabaseLogger.logOperation("User", "getCurrentUser", undefined, result);
+        return user;
+      } else {
+        DatabaseLogger.logOperation("User", "getCurrentUser", undefined, null);
+        return null;
+      }
+    } catch (error) {
+      DatabaseLogger.logOperation("User", "getCurrentUser", undefined, undefined, error);
+      throw error;
+    }
   }
 
   updateUsername(username: string): User | null {
@@ -89,8 +124,21 @@ export class UserRepository {
   }
 
   getSubjects() {
-    const user = this.getCurrentUser();
-    return user ? user.subjects : [];
+    try {
+      const user = this.getCurrentUser();
+
+      if (user) {
+        const result = { count: user.subjects.length };
+        DatabaseLogger.logOperation("User", "getSubjects", undefined, result);
+        return user.subjects;
+      } else {
+        DatabaseLogger.logOperation("User", "getSubjects", undefined, { count: 0 });
+        return [];
+      }
+    } catch (error) {
+      DatabaseLogger.logOperation("User", "getSubjects", undefined, undefined, error);
+      throw error;
+    }
   }
 
   getUserStats() {

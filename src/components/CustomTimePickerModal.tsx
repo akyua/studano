@@ -1,138 +1,152 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface CustomTimePickerModalProps {
-  isVisible: boolean;
+  visible: boolean;
   onClose: () => void;
-  onConfirm: (time: Date) => void;
-  initialTime: Date;
-  use12HourFormat: boolean;
+  onTimeSelect: (time: Date) => void;
+  initialTime?: Date;
 }
 
+const { width: screenWidth } = Dimensions.get('window');
+
 const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
-  isVisible,
+  visible,
   onClose,
-  onConfirm,
-  initialTime,
-  use12HourFormat,
+  onTimeSelect,
+  initialTime = new Date(),
 }) => {
-  const [selectedHour, setSelectedHour] = useState('');
-  const [selectedMinute, setSelectedMinute] = useState('');
-  const [meridiem, setMeridiem] = useState('AM');
+  const { t } = useTranslation();
+  const [selectedHour, setSelectedHour] = useState(initialTime.getHours());
+  const [selectedMinute, setSelectedMinute] = useState(initialTime.getMinutes());
+  const [isAM, setIsAM] = useState(initialTime.getHours() < 12);
 
   useEffect(() => {
-    if (isVisible) {
+    if (initialTime) {
       let initialHour = initialTime.getHours();
-      let initialMinute = initialTime.getMinutes();
-
-      if (use12HourFormat) {
-        setMeridiem(initialHour >= 12 ? 'PM' : 'AM');
-        initialHour = initialHour % 12;
-        if (initialHour === 0) initialHour = 12; // 0h ou 12h AM devem ser 12 no formato 12h
-      }
-
-      setSelectedHour(initialHour.toString());
-      setSelectedMinute(initialMinute < 10 ? `0${initialMinute}` : initialMinute.toString());
+      if (initialHour === 0) initialHour = 12;
+      setSelectedHour(initialHour);
+      setSelectedMinute(initialTime.getMinutes());
+      setIsAM(initialTime.getHours() < 12);
     }
-  }, [isVisible, initialTime, use12HourFormat]);
+  }, [initialTime]);
 
   const generateNumbers = (start: number, end: number, padZero: boolean = false) => {
-    return Array.from({ length: end - start + 1 }, (_, i) => {
-      const num = start + i;
-      return padZero && num < 10 ? `0${num}` : `${num}`;
-    });
+    const numbers = [];
+    for (let i = start; i <= end; i++) {
+      numbers.push(padZero ? i.toString().padStart(2, '0') : i.toString());
+    }
+    return numbers;
   };
 
-  const hours = use12HourFormat ? generateNumbers(1, 12, false) : generateNumbers(0, 23, true);
-  const minutes = generateNumbers(0, 59, true); // Minutos sempre com zero à esquerda
+  const hours = generateNumbers(1, 12);
+  const minutes = generateNumbers(0, 59, true);
 
-  const handleConfirm = () => {
-    let hour = parseInt(selectedHour, 10);
-    const minute = parseInt(selectedMinute, 10);
-
-    if (use12HourFormat) {
-      if (meridiem === 'PM' && hour < 12) {
-        hour += 12;
-      } else if (meridiem === 'AM' && hour === 12) {
-        hour = 0; // 12 AM (meia-noite) é 0h
-      }
+  const handleTimeSelect = () => {
+    let hour = selectedHour;
+    if (!isAM && hour !== 12) {
+      hour += 12;
+    } else if (isAM && hour === 12) {
+      hour = 0;
     }
 
-    const newTime = new Date();
-    newTime.setHours(hour);
-    newTime.setMinutes(minute);
-    newTime.setSeconds(0);
-    newTime.setMilliseconds(0);
-    onConfirm(newTime);
+    const selectedTime = new Date();
+    selectedTime.setHours(hour);
+    selectedTime.setMinutes(selectedMinute);
+    selectedTime.setSeconds(0);
+    selectedTime.setMilliseconds(0);
+
+    onTimeSelect(selectedTime);
+    onClose();
   };
+
+  const renderPickerColumn = (
+    data: string[],
+    selectedValue: number,
+    onValueChange: (value: number) => void,
+    label: string
+  ) => (
+    <View style={styles.pickerColumn}>
+      <Text style={styles.columnLabel}>{label}</Text>
+      <ScrollView
+        style={styles.pickerScrollView}
+        showsVerticalScrollIndicator={false}
+        snapToInterval={50}
+        decelerationRate="fast"
+      >
+        {data.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.pickerItem,
+              selectedValue === (label === 'Hour' ? parseInt(item) : index) && styles.selectedPickerItem,
+            ]}
+            onPress={() => onValueChange(label === 'Hour' ? parseInt(item) : index)}
+          >
+            <Text
+              style={[
+                styles.pickerItemText,
+                selectedValue === (label === 'Hour' ? parseInt(item) : index) && styles.selectedPickerItemText,
+              ]}
+            >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
 
   return (
     <Modal
-      animationType="fade"
+      visible={visible}
       transparent={true}
-      visible={isVisible}
+      animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalTitle}>Selecione o Horário</Text>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>{t('timePicker.selectTime', 'Select Time')}</Text>
 
           <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedHour}
-              style={styles.picker}
-              onValueChange={(itemValue) => setSelectedHour(itemValue)}
-            >
-              {hours.map((hour) => (
-                <Picker.Item
-                  key={hour}
-                  label={hour}
-                  value={hour}
-                  style={styles.pickerItem}
-                />
-              ))}
-            </Picker>
-            <Text style={styles.pickerSeparator}>:</Text>
-            <Picker
-              selectedValue={selectedMinute}
-              style={styles.picker}
-              onValueChange={(itemValue) => setSelectedMinute(itemValue)}
-            >
-              {minutes.map((minute) => (
-                <Picker.Item
-                  key={minute}
-                  label={minute}
-                  value={minute}
-                  style={styles.pickerItem}
-                />
-              ))}
-            </Picker>
+            {renderPickerColumn(hours, selectedHour, setSelectedHour, 'Hour')}
+            {renderPickerColumn(minutes, selectedMinute, setSelectedMinute, 'Minute')}
 
-            {use12HourFormat && (
-              <View style={styles.meridiemColumn}>
-                <TouchableOpacity
-                  style={[styles.meridiemButton, meridiem === 'AM' && styles.selectedMeridiem]}
-                  onPress={() => setMeridiem('AM')}
-                >
-                  <Text style={[styles.meridiemText, meridiem === 'AM' && styles.selectedMeridiemText]}>AM</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.meridiemButton, meridiem === 'PM' && styles.selectedMeridiem]}
-                  onPress={() => setMeridiem('PM')}
-                >
-                  <Text style={[styles.meridiemText, meridiem === 'PM' && styles.selectedMeridiemText]}>PM</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            <View style={styles.meridiemColumn}>
+              <TouchableOpacity
+                style={[styles.meridiemButton, isAM && styles.selectedMeridiemButton]}
+                onPress={() => setIsAM(true)}
+              >
+                <Text style={[styles.meridiemText, isAM && styles.selectedMeridiemText]}>
+                  AM
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.meridiemButton, !isAM && styles.selectedMeridiemButton]}
+                onPress={() => setIsAM(false)}
+              >
+                <Text style={[styles.meridiemText, !isAM && styles.selectedMeridiemText]}>
+                  PM
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.buttonText}>Cancelar</Text>
+              <Text style={styles.cancelButtonText}>{t('common.cancel', 'Cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-              <Text style={styles.buttonText}>Confirmar</Text>
+            <TouchableOpacity style={styles.confirmButton} onPress={handleTimeSelect}>
+              <Text style={styles.confirmButtonText}>{t('common.confirm', 'Confirm')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -142,116 +156,117 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
 };
 
 const styles = StyleSheet.create({
-  centeredView: {
+  modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  modalView: {
-    margin: 20,
+  modalContent: {
     backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 25,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: '80%',
+    borderRadius: 20,
+    padding: 20,
+    width: screenWidth * 0.9,
+    maxWidth: 400,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
     marginBottom: 20,
-    color: '#000',
   },
   pickerContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
-    width: '100%',
-    justifyContent: 'center',
   },
-  picker: {
-    width: 90, // Aumentado para dar mais espaço
+  pickerColumn: {
+    alignItems: 'center',
+    width: 90,
+  },
+  columnLabel: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 10,
+  },
+  pickerScrollView: {
     height: 150,
-    // Flex 1 pode ajudar a distribuir o espaço, mas vamos começar com largura fixa
-    // flex: 1,
+    width: '100%',
   },
   pickerItem: {
-    color: '#000',
-    fontSize: 22, // Aumentado para ver se ajuda a renderização
-    fontWeight: 'bold', // Mantido para destaque
-    textAlign: 'center',
-    // Adicionado para Android, para centralizar verticalmente
-    ...(Platform.OS === 'android' && {
-      textAlignVertical: 'center',
-    }),
-  },
-  pickerSeparator: {
-    fontSize: 28, // Aumentado para destaque
-    fontWeight: 'bold',
-    color: '#000',
-    marginHorizontal: 5,
-  },
-  meridiemColumn: { // Renomeado de meridiemContainer para ser mais descritivo
-    flexDirection: 'column',
-    marginLeft: 15, // Ajustado para dar mais espaço
-    justifyContent: 'center', // Centralizar os botões verticalmente
-    height: 150, // Mesma altura dos pickers para alinhamento
-  },
-  meridiemButton: {
-    paddingVertical: 10, // Aumentado o padding
-    paddingHorizontal: 20, // Aumentado o padding
-    borderRadius: 8, // Borda mais arredondada
-    marginBottom: 5, // Espaço entre os botões
-    backgroundColor: '#eee',
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1, // Para que ocupem o espaço disponível igualmente
+    width: '100%',
   },
-  selectedMeridiem: {
-    backgroundColor: '#000',
+  selectedPickerItem: {
+    backgroundColor: '#E3F2FD',
+    borderRadius: 8,
+  },
+  pickerItemText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlignVertical: 'center',
+  },
+  selectedPickerItemText: {
+    color: '#007AFF',
+  },
+  meridiemColumn: {
+    marginLeft: 15,
+    justifyContent: 'center',
+    height: 150,
+  },
+  meridiemButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 5,
+    backgroundColor: '#F2F2F7',
+    alignItems: 'center',
+    flex: 1,
+  },
+  selectedMeridiemButton: {
+    backgroundColor: '#007AFF',
   },
   meridiemText: {
-    color: '#000',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   selectedMeridiemText: {
-    color: '#fff',
+    color: 'white',
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 10,
+    justifyContent: 'space-between',
   },
   cancelButton: {
-    backgroundColor: '#ccc',
-    padding: 10,
-    borderRadius: 8,
     flex: 1,
+    padding: 15,
+    backgroundColor: '#F2F2F7',
+    borderRadius: 10,
     marginRight: 10,
     alignItems: 'center',
   },
   confirmButton: {
-    backgroundColor: '#000',
-    padding: 10,
-    borderRadius: 8,
     flex: 1,
+    padding: 15,
+    backgroundColor: '#007AFF',
+    borderRadius: 10,
     marginLeft: 10,
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  cancelButtonText: {
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#666',
+  },
+  confirmButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
 

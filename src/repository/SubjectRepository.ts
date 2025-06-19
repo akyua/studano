@@ -2,6 +2,7 @@ import { Realm } from "realm";
 import { Subject } from "../models/Subject";
 import { PomodoroSession } from "../models/PomodoroSession";
 import { useRealm } from "@/database/RealmContext";
+import { DatabaseLogger } from "@/utils/databaseLogger";
 
 export class SubjectRepository {
   realm: Realm;
@@ -11,71 +12,179 @@ export class SubjectRepository {
   }
 
   create(name: string, color: string): Subject {
-    let subject!: Subject;
+    const request = { name, color };
 
-    this.realm.write(() => {
-      subject = this.realm.create<Subject>("Subject", {
-        _id: new Realm.BSON.ObjectId(),
-        name,
-        sessions: [],
+    try {
+      let subject!: Subject;
+
+      this.realm.write(() => {
+        subject = this.realm.create<Subject>("Subject", {
+          _id: new Realm.BSON.ObjectId(),
+          name,
+          sessions: [],
+        });
       });
-    });
 
-    return subject;
+      const result = {
+        id: subject._id.toString(),
+        name: subject.name,
+        sessionsCount: subject.sessions.length,
+      };
+
+      DatabaseLogger.logOperation("Subject", "create", request, result);
+      return subject;
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "create", request, undefined, error);
+      throw error;
+    }
   }
 
   update(subjectId: Realm.BSON.ObjectId, data: { name?: string; color?: string }): Subject | null {
-    const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+    const request = { subjectId: subjectId.toString(), data };
 
-    if (subject) {
-      this.realm.write(() => {
-        if (data.name !== undefined) subject.name = data.name;
-      });
-      return subject;
+    try {
+      const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+
+      if (subject) {
+        this.realm.write(() => {
+          if (data.name !== undefined) subject.name = data.name;
+        });
+
+        const result = {
+          id: subject._id.toString(),
+          name: subject.name,
+        };
+
+        DatabaseLogger.logOperation("Subject", "update", request, result);
+        return subject;
+      }
+
+      DatabaseLogger.logOperation("Subject", "update", request, null);
+      return null;
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "update", request, undefined, error);
+      throw error;
     }
-
-    return null;
   }
 
   delete(subjectId: Realm.BSON.ObjectId): boolean {
-    const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+    const request = { subjectId: subjectId.toString() };
 
-    if (subject) {
-      this.realm.write(() => {
-        this.realm.delete(subject.sessions);
-        this.realm.delete(subject);
-      });
-      return true;
+    try {
+      const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+
+      if (subject) {
+        this.realm.write(() => {
+          this.realm.delete(subject.sessions);
+          this.realm.delete(subject);
+        });
+
+        DatabaseLogger.logOperation("Subject", "delete", request, { success: true });
+        return true;
+      }
+
+      DatabaseLogger.logOperation("Subject", "delete", request, { success: false });
+      return false;
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "delete", request, undefined, error);
+      throw error;
     }
-
-    return false;
   }
 
   addSession(subjectId: Realm.BSON.ObjectId, sessionId: Realm.BSON.ObjectId): Subject | null {
-    const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
-    const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+    const request = {
+      subjectId: subjectId.toString(),
+      sessionId: sessionId.toString(),
+    };
 
-    if (subject && session) {
-      this.realm.write(() => {
-        subject.sessions.push(session);
-      });
-      return subject;
+    try {
+      const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+      const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+
+      if (subject && session) {
+        this.realm.write(() => {
+          subject.sessions.push(session);
+        });
+
+        const result = {
+          subjectId: subject._id.toString(),
+          subjectName: subject.name,
+          sessionsCount: subject.sessions.length,
+        };
+
+        DatabaseLogger.logOperation("Subject", "addSession", request, result);
+        return subject;
+      }
+
+      DatabaseLogger.logOperation("Subject", "addSession", request, null);
+      return null;
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "addSession", request, undefined, error);
+      throw error;
     }
-
-    return null;
   }
 
   getAll() {
-    return this.realm.objects<Subject>("Subject");
+    try {
+      const subjects = this.realm.objects<Subject>("Subject");
+      const result = { count: subjects.length };
+
+      DatabaseLogger.logOperation("Subject", "getAll", undefined, result);
+      return subjects;
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "getAll", undefined, undefined, error);
+      throw error;
+    }
   }
 
   getById(subjectId: Realm.BSON.ObjectId): Subject | null {
-    return this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+    const request = { subjectId: subjectId.toString() };
+
+    try {
+      const subject = this.realm.objectForPrimaryKey<Subject>("Subject", subjectId);
+
+      if (subject) {
+        const result = {
+          id: subject._id.toString(),
+          name: subject.name,
+          sessionsCount: subject.sessions.length,
+        };
+
+        DatabaseLogger.logOperation("Subject", "getById", request, result);
+      } else {
+        DatabaseLogger.logOperation("Subject", "getById", request, null);
+      }
+
+      return subject;
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "getById", request, undefined, error);
+      throw error;
+    }
   }
 
   getByName(name: string): Subject | null {
-    const subjects = this.realm.objects<Subject>("Subject").filtered("name == $0", name);
-    return subjects.length > 0 ? subjects[0] : null;
+    const request = { name };
+
+    try {
+      const subjects = this.realm.objects<Subject>("Subject").filtered("name == $0", name);
+
+      if (subjects.length > 0) {
+        const subject = subjects[0];
+        const result = {
+          id: subject._id.toString(),
+          name: subject.name,
+        };
+
+        DatabaseLogger.logOperation("Subject", "getByName", request, result);
+        return subject;
+      } else {
+        DatabaseLogger.logOperation("Subject", "getByName", request, null);
+        return null;
+      }
+    } catch (error) {
+      DatabaseLogger.logOperation("Subject", "getByName", request, undefined, error);
+      throw error;
+    }
   }
 
   getSubjectStats(subjectId: Realm.BSON.ObjectId) {
