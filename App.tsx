@@ -6,6 +6,12 @@ import 'react-native-gesture-handler';
 import { StatusBar, Platform } from "react-native";
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { RealmProvider } from '@/database/RealmContext';
+import { useEnsureUser } from "@/hooks/useEnsureUser";
+
+function EnsureUser() {
+  useEnsureUser();
+  return null;
+}
 
 export default function App() {
   useEffect(() => {
@@ -31,6 +37,7 @@ export default function App() {
     <>
       <StatusBar hidden={true} />
       <RealmProvider>
+        <EnsureUser />
         <NavigationContainer>
           <AppNavigator />
         </NavigationContainer>
