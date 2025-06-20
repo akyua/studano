@@ -17,6 +17,7 @@ interface PomodoroProps {
 
 export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps) {
   const { t } = useTranslation();
+  const sessionDuration = selectedSubject?.sessionDuration || 1500;
   const {
     isRunning,
     formattedTime,
@@ -25,7 +26,7 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
     resetTimer,
     secondsLeft,
     initialTime,
-  }: PomodoroTimerResult = usePomodoroTimer(10, selectedSubject);
+  }: PomodoroTimerResult = usePomodoroTimer(sessionDuration, selectedSubject);
 
   useEffect(() => {
     if (onResetRef) {

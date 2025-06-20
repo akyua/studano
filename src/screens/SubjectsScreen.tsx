@@ -29,19 +29,23 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [newSubject, setNewSubject] = useState("");
+  const [sessionDuration, setSessionDuration] = useState("25");
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
 
   const handleAddSubject = () => {
     if (newSubject.trim() !== "") {
       try {
+        const durationInSeconds = parseInt(sessionDuration) * 60;
         realm.write(() => {
           realm.create<Subject>("Subject", {
             _id: new Realm.BSON.ObjectId(),
             name: newSubject.trim(),
+            sessionDuration: durationInSeconds,
             sessions: [],
           });
         });
         setNewSubject("");
+        setSessionDuration("25");
         setModalVisible(false);
       } catch (error) {
         Alert.alert(t('common.error'), t('common.failed_to_create_subject'));
@@ -52,16 +56,20 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const handleEditSubject = (subject: Subject) => {
     setEditingSubject(subject);
     setNewSubject(subject.name);
+    setSessionDuration((subject.sessionDuration / 60).toString());
     setModalVisible(true);
   };
 
   const handleUpdateSubject = () => {
     if (editingSubject && newSubject.trim() !== "") {
       try {
+        const durationInSeconds = parseInt(sessionDuration) * 60;
         realm.write(() => {
           editingSubject.name = newSubject.trim();
+          editingSubject.sessionDuration = durationInSeconds;
         });
         setNewSubject("");
+        setSessionDuration("25");
         setEditingSubject(null);
         setModalVisible(false);
       } catch (error) {
@@ -112,8 +120,15 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
 
   const renderItem = ({ item }: { item: Subject }) => (
     <View style={styles.subjectItem}>
-      <View style={styles.subjectBullet} />
-      <Text style={styles.subjectName}>{item.name}</Text>
+      <View style={styles.subjectInfo}>
+        <View style={styles.subjectBullet} />
+        <View style={styles.subjectDetails}>
+          <Text style={styles.subjectName}>{item.name}</Text>
+          <Text style={styles.subjectDuration}>
+            {t('subjects.sessionDuration', { duration: item.sessionDuration / 60 })} min
+          </Text>
+        </View>
+      </View>
       <View style={styles.subjectActions}>
         <TouchableOpacity onPress={() => handleEditSubject(item)} style={styles.actionButton}>
           <Image
@@ -198,6 +213,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
             setModalVisible(false);
             setEditingSubject(null);
             setNewSubject("");
+            setSessionDuration("25");
           }}
         >
           <View style={styles.centeredView}>
@@ -205,12 +221,22 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
               <Text style={styles.modalTitle}>
                 {editingSubject ? t("subjects.editSubjectModalTitle") : t("subjects.addSubjectModalTitle")}
               </Text>
+              <Text style={styles.modalLabel}>{t("subjects.nameLabel")}</Text>
               <TextInput
                 style={styles.modalInput}
                 placeholder={t("subjects.subjectNamePlaceholder")}
                 placeholderTextColor="#888"
                 value={newSubject}
                 onChangeText={setNewSubject}
+              />
+              <Text style={styles.modalLabel}>{t("subjects.sessionDurationLabel")}</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder={t("subjects.sessionDurationPlaceholder")}
+                placeholderTextColor="#888"
+                value={sessionDuration}
+                onChangeText={setSessionDuration}
+                keyboardType="numeric"
               />
               <View style={styles.modalButtons}>
                 <TouchableOpacity
@@ -219,6 +245,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
                     setModalVisible(false);
                     setEditingSubject(null);
                     setNewSubject("");
+                    setSessionDuration("25");
                   }}
                 >
                   <Text style={styles.buttonText}>{t("subjects.cancelButton")}</Text>
@@ -305,6 +332,10 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
   },
+  subjectInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   subjectBullet: {
     width: 8,
     height: 8,
@@ -312,10 +343,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     marginRight: 12,
   },
+  subjectDetails: {
+    flexDirection: 'column',
+  },
   subjectName: {
     flex: 1,
     color: 'black',
     fontSize: 16,
+  },
+  subjectDuration: {
+    color: '#888',
+    fontSize: 14,
   },
   subjectActions: {
     flexDirection: 'row',
@@ -366,6 +404,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
+    color: 'black',
+  },
+  modalLabel: {
+    alignSelf: 'flex-start',
+    marginBottom: 5,
+    fontSize: 14,
+    fontWeight: 'bold',
     color: 'black',
   },
   modalButtons: {
