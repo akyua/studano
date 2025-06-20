@@ -40,7 +40,10 @@
     "deleteButton": "Delete",
     "deleteConfirmationTitle": "Confirm Deletion",
     "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?",
-    "noSubjects": "No subjects yet"
+    "noSubjects": "No subjects yet",
+    "defaultSubjectName": "Default",
+    "createGeneral": "Create Default Subject",
+    "createError": "Could not create Default subject"
   },
   "schedules": {
     "title": "Schedule",

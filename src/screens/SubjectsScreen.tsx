@@ -19,7 +19,7 @@ import HeaderComponent from "@/components/HeaderComponent";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRealm, useQuery } from "@/database/RealmContext";
 import { Subject } from "@/models/Subject";
-import { Realm } from "realm";
+import { BSON } from "realm";
 import { useTheme } from '@/context/ThemeContext';
 
 const SubjectsScreen = (props: SubjectsScreenProps) => {
@@ -40,7 +40,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
         const durationInSeconds = parseInt(sessionDuration) * 60;
         realm.write(() => {
           realm.create<Subject>("Subject", {
-            _id: new Realm.BSON.ObjectId(),
+            _id: new BSON.ObjectId(),
             name: newSubject.trim(),
             sessionDuration: durationInSeconds,
             sessions: [],

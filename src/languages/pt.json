@@ -40,7 +40,10 @@
     "deleteButton": "Remover",
     "deleteConfirmationTitle": "Confirmar Exclusão",
     "deleteConfirmationMessage": "Tem certeza que deseja remover '{subjectName}'?",
-    "noSubjects": "Nenhuma matéria ainda"
+    "noSubjects": "Nenhuma matéria ainda",
+    "defaultSubjectName": "Padrão",
+    "createGeneral": "Criar Matéria Padrão",
+    "createError": "Não foi possível criar a matéria Padrão"
   },
   "schedules": {
     "title": "Cronograma",

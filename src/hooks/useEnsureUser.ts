@@ -6,8 +6,10 @@ import { Day } from "@/models/Day";
 import { SubjectRepository } from "@/repository/SubjectRepository";
 import { DayRepository } from "@/repository/DayRepository";
 import { DatabaseLogger } from "@/utils/databaseLogger";
+import { useTranslation } from "react-i18next";
 
 export function useEnsureUser() {
+  const { t } = useTranslation();
   const realm = useRealm();
   const users = useQuery(User);
   const subjects = useQuery(Subject);
@@ -45,14 +47,15 @@ export function useEnsureUser() {
       DatabaseLogger.logHook("useEnsureUser", "seedDays", undefined, { success: true });
     }
 
-    const generalSubject = subjects.find((subject) => subject.name === "General");
+    const defaultSubjectName = t('subjects.defaultSubjectName', 'Default');
+    const generalSubject = subjects.find((subject) => subject.name === defaultSubjectName);
     if (!generalSubject) {
       DatabaseLogger.logHook("useEnsureUser", "createGeneralSubject", {
-        name: "General",
+        name: defaultSubjectName,
         color: "#007AFF",
       });
 
-      const newSubject = subjectRepo.create("General", "#007AFF");
+      const newSubject = subjectRepo.create(defaultSubjectName, "#007AFF");
 
       const result = {
         id: newSubject._id.toString(),
@@ -68,5 +71,5 @@ export function useEnsureUser() {
 
       DatabaseLogger.logHook("useEnsureUser", "checkGeneralSubject", undefined, result);
     }
-  }, [users, subjects, days, realm, subjectRepo, dayRepo]);
+  }, [users, subjects, days, realm, subjectRepo, dayRepo, t]);
 }
