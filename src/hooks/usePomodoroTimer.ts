@@ -31,6 +31,7 @@ export const usePomodoroTimer = (
     DatabaseLogger.logHook("usePomodoroTimer", "subjectChanged", {
       subjectId: selectedSubject?._id?.toHexString() || "null",
       subjectName: selectedSubject?.name || "null",
+      sessionDuration: selectedSubject?.sessionDuration || "null",
     });
     
     if (selectedSubject) {
@@ -38,7 +39,7 @@ export const usePomodoroTimer = (
     } else {
       resetToInitialState();
     }
-  }, [selectedSubject?._id?.toHexString()]);
+  }, [selectedSubject?._id?.toHexString(), selectedSubject?.sessionDuration]);
 
   const resetToInitialState = () => {
     if (intervalRef.current) {
