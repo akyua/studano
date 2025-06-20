@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { LineChart, BarChart } from "react-native-chart-kit";
 import { useTranslation } from "react-i18next";
@@ -189,9 +189,12 @@ const HistoryScreen = (props: HistoryScreenProps) => {
         <Text style={styles.title}>{t('history.pomodoro_time_per_day')}</Text>
         
         <View style={styles.streakContainer}>
-          <Text style={styles.streakText}>
-            🔥 {overallStats.studyStreak} {overallStats.studyStreak === 1 ? t('history.study_streak_text') : t('history.study_streak_text_plural')}
-          </Text>
+          <View style={styles.streakContent}>
+            <Image source={require('../../assets/images/fire.png')} style={styles.streakIcon} />
+            <Text style={styles.streakText}>
+              {overallStats.studyStreak} {overallStats.studyStreak === 1 ? t('history.study_streak_text') : t('history.study_streak_text_plural')}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.timeRangeContainer}>
@@ -329,16 +332,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   streakContainer: {
-    backgroundColor: '#fff3cd',
+    backgroundColor: '#f8f9fa',
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  streakContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  streakIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
   },
   streakText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#856404',
+    color: '#000000',
   },
   timeRangeContainer: {
     flexDirection: 'row',

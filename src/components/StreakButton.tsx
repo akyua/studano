@@ -21,7 +21,7 @@ export default function StreakButton({ onPress, refreshTrigger }: StreakButtonPr
   }, [loadStreakCount, refreshTrigger]);
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
       <Image source={require('../../assets/images/fire.png')} style={styles.icon} />
       <Text style={styles.text}>{streakCount}</Text>
     </TouchableOpacity>

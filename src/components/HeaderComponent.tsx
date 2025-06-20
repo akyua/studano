@@ -15,13 +15,17 @@ const HeaderComponent = () => {
     setRefreshTrigger(prev => prev + 1);
   }, [sessions.length]);
 
+  const handleStreakPress = () => {
+    navigation.navigate('History' as never);
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
         <Menu size={32} color="black" />
       </TouchableOpacity>
       <View style={styles.fireContainer}>
-        <StreakButton refreshTrigger={refreshTrigger} />
+        <StreakButton onPress={handleStreakPress} refreshTrigger={refreshTrigger} />
       </View>
     </View>
   );
