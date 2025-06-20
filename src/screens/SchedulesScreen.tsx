@@ -43,9 +43,7 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
   const loadSchedule = async () => {
     try {
       if (!currentUser) return;
-
       const scheduleData = preferencesRepo.getScheduleData(currentUser._id);
-
       if (scheduleData) {
         setSelectedDayIds(scheduleData.selectedDayIds || []);
         setReceiveNotifications(scheduleData.receiveNotifications || false);
@@ -69,9 +67,9 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
   const formatTimeDisplay = (date?: Date, placeholder?: string) => {
     if (!date) return placeholder || '';
     if (isPortuguese) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+      return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
     } else {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
     }
   };
 
@@ -82,7 +80,6 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
 
   const handleSaveSchedule = async () => {
     if (!currentUser) return;
-
     try {
       preferencesRepo.updateScheduleData(
         currentUser._id,
@@ -90,13 +87,11 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
         notificationTime,
         receiveNotifications
       );
-
       await scheduleWeeklyNotifications(
         selectedDayIds,
         notificationTime,
         receiveNotifications
       );
-
       Alert.alert(
         t('schedules.saveSuccessTitle', 'Schedule Saved'),
         t('schedules.saveSuccessBody', 'Your notification preferences have been saved.')
@@ -109,9 +104,13 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
     }
   };
 
+  const ptDayAbbreviations: { [key: string]: string } = {
+      sun: 'D', mon: 'S', tue: 'T', wed: 'Q', thu: 'Q', fri: 'S', sat: 'S'
+  };
+
   const daysOfWeekData = sortedDays.map(day => ({
     id: day.code,
-    day: day.abbreviation
+    day: isPortuguese ? ptDayAbbreviations[day.code] || day.abbreviation : day.abbreviation
   }));
 
   return (
@@ -227,6 +226,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 30,
     paddingVertical: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
   },
   notificationText: {
     fontSize: 16,
