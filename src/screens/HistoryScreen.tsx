@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { LineChart, BarChart } from "react-native-chart-kit";
@@ -8,6 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderComponent from '@/components/HeaderComponent';
 import { HistoryService } from '@/services/historyService';
 import { Subject } from '@/models/Subject';
+import { useQuery } from '@/database/RealmContext';
+import { PomodoroSession } from '@/models/PomodoroSession';
 import i18n from '../../i18n';
 
 const chartWidth = Math.max(Dimensions.get("window").width - 32, 800);
@@ -36,6 +38,7 @@ const HistoryScreen = (props: HistoryScreenProps) => {
   const [selectedDay, setSelectedDay] = useState<DayDetail | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const sessions = useQuery(PomodoroSession);
   const subjects = getAllSubjects();
   const overallStats = historyService.getOverallStats(parseInt(timeRange));
   const subjectComparison = historyService.getSubjectComparisonData(parseInt(timeRange));

@@ -59,8 +59,9 @@ export class HistoryService {
     const subjectStats = this.aggregateSubjectStats(Array.from(sessions), Array.from(subjects), startDate, endDate);
 
     const totalMinutes = Array.from(sessions).reduce((sum: number, session: PomodoroSession) => {
-      const duration = session.duration - session.remainingTime;
-      return sum + duration;
+      const durationInSeconds = session.duration - session.remainingTime;
+      const durationInMinutes = Math.round(durationInSeconds / 60);
+      return sum + durationInMinutes;
     }, 0);
 
     const totalSessions = sessions.length;
@@ -99,8 +100,9 @@ export class HistoryService {
 
     const dailyStats = this.aggregateDailyStats(Array.from(sessions), [subject]);
     const totalMinutes = Array.from(sessions).reduce((sum: number, session: PomodoroSession) => {
-      const duration = session.duration - session.remainingTime;
-      return sum + duration;
+      const durationInSeconds = session.duration - session.remainingTime;
+      const durationInMinutes = Math.round(durationInSeconds / 60);
+      return sum + durationInMinutes;
     }, 0);
 
     const totalSessions = sessions.length;
@@ -123,7 +125,8 @@ export class HistoryService {
       const sessionDate = new Date(session.startTime);
       const dateKey = sessionDate.toISOString().split('T')[0];
       
-      const duration = session.duration - session.remainingTime;
+      const durationInSeconds = session.duration - session.remainingTime;
+      const durationInMinutes = Math.round(durationInSeconds / 60);
       let subject: Subject | null = null;
       if (session.subjectId) {
         subject = subjects.find(s =>
@@ -143,7 +146,7 @@ export class HistoryService {
       }
 
       const dayStats = dailyMap.get(dateKey)!;
-      dayStats.totalMinutes += duration;
+      dayStats.totalMinutes += durationInMinutes;
       dayStats.sessionsCount += 1;
 
       if (subject && session.subjectId) {
@@ -155,7 +158,7 @@ export class HistoryService {
             subjectName: subject.name,
           };
         }
-        dayStats.subjects[subjectId].minutes += duration;
+        dayStats.subjects[subjectId].minutes += durationInMinutes;
         dayStats.subjects[subjectId].sessionsCount += 1;
       }
     });
@@ -177,8 +180,9 @@ export class HistoryService {
       
       if (subjectSessions.length > 0) {
         const totalMinutes = subjectSessions.reduce((sum: number, session: PomodoroSession) => {
-          const duration = session.duration - session.remainingTime;
-          return sum + duration;
+          const durationInSeconds = session.duration - session.remainingTime;
+          const durationInMinutes = Math.round(durationInSeconds / 60);
+          return sum + durationInMinutes;
         }, 0);
 
         const totalSessions = subjectSessions.length;
@@ -252,8 +256,9 @@ export class HistoryService {
       );
       
       const totalMinutes = subjectSessions.reduce((sum: number, session: PomodoroSession) => {
-        const duration = session.duration - session.remainingTime;
-        return sum + duration;
+        const durationInSeconds = session.duration - session.remainingTime;
+        const durationInMinutes = Math.round(durationInSeconds / 60);
+        return sum + durationInMinutes;
       }, 0);
 
       if (totalMinutes > 0) {
@@ -289,8 +294,9 @@ export class HistoryService {
       
       if (dailyMap.has(dateKey)) {
         const dayData = dailyMap.get(dateKey)!;
-        const duration = session.duration - session.remainingTime;
-        dayData.minutes += duration;
+        const durationInSeconds = session.duration - session.remainingTime;
+        const durationInMinutes = Math.round(durationInSeconds / 60);
+        dayData.minutes += durationInMinutes;
         dayData.sessions += 1;
 
         if (session.subjectId) {
@@ -304,7 +310,7 @@ export class HistoryService {
                 subjectName: subject.name,
               };
             }
-            dayData.subjects[subjectId].minutes += duration;
+            dayData.subjects[subjectId].minutes += durationInMinutes;
             dayData.subjects[subjectId].sessionsCount += 1;
           }
         }
