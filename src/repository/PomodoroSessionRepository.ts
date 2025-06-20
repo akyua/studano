@@ -1,46 +1,61 @@
-import { Realm } from "realm";
-import { PomodoroSession } from "@/models/PomodoroSession";
 import { useRealm } from "@/database/RealmContext";
+import { PomodoroSession } from "@/models/PomodoroSession";
 import { DatabaseLogger } from "@/utils/databaseLogger";
+import { BSON } from "realm";
 
 export class PomodoroSessionRepository {
-  realm: Realm;
+  private realm: Realm;
 
   constructor() {
     this.realm = useRealm();
   }
 
-  create(duration: number, subjectId?: Realm.BSON.ObjectId): PomodoroSession {
-    const request = { duration, subjectId: subjectId?.toString() || "null" };
-    const now = new Date();
-    let session!: PomodoroSession;
-
+  create(
+    subjectId: BSON.ObjectId,
+    startTime: Date,
+    endTime: Date,
+    duration: number,
+    isCompleted: boolean = false
+  ): PomodoroSession {
     try {
+      const request = {
+        subjectId: subjectId.toString(),
+        startTime,
+        endTime,
+        duration,
+        isCompleted,
+      };
+
+      DatabaseLogger.logOperation("PomodoroSession", "create", request);
+
+      let newSession: PomodoroSession | undefined;
       this.realm.write(() => {
-        session = this.realm.create<PomodoroSession>("PomodoroSession", {
-          _id: new Realm.BSON.ObjectId(),
-          startTime: now,
-          endTime: new Date(now.getTime() + duration * 1000),
+        newSession = this.realm.create<PomodoroSession>("PomodoroSession", {
+          _id: new BSON.ObjectId(),
+          subjectId,
+          startTime,
+          endTime,
           duration,
           remainingTime: duration,
-          completed: false,
+          completed: isCompleted,
           paused: false,
-          subjectId,
         });
       });
 
+      if (!newSession) {
+        throw new Error("Failed to create pomodoro session");
+      }
+
       const result = {
-        id: session._id.toString(),
-        startTime: session.startTime,
-        duration: session.duration,
-        remainingTime: session.remainingTime,
-        subjectId: session.subjectId?.toString() || "null",
+        id: newSession._id.toString(),
+        subjectId: newSession.subjectId?.toString() || "null",
+        duration: newSession.duration,
       };
 
-      DatabaseLogger.logOperation("PomodoroSession", "create", request, result);
-      return session;
+      DatabaseLogger.logOperation("PomodoroSession", "create", undefined, result);
+      return newSession;
     } catch (error) {
-      DatabaseLogger.logOperation("PomodoroSession", "create", request, undefined, error);
+      DatabaseLogger.logOperation("PomodoroSession", "create", undefined, undefined, error);
       throw error;
     }
   }
@@ -133,11 +148,11 @@ export class PomodoroSessionRepository {
   }
 
   createForSubject(duration: number, subjectId: Realm.BSON.ObjectId): PomodoroSession {
-    return this.create(duration, subjectId);
+    return this.create(subjectId, new Date(), new Date(new Date().getTime() + duration * 1000), duration);
   }
 
   createQuickSession(duration: number): PomodoroSession {
-    return this.create(duration);
+    return this.create(new BSON.ObjectId(), new Date(), new Date(new Date().getTime() + duration * 1000), duration);
   }
 
   complete(sessionId: Realm.BSON.ObjectId): PomodoroSession | null {

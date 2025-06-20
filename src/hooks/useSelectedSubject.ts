@@ -6,8 +6,10 @@ import { BSON } from "realm";
 import { SubjectRepository } from "@/repository/SubjectRepository";
 import { UserPreferencesRepository } from "@/repository/UserPreferencesRepository";
 import { DatabaseLogger } from "@/utils/databaseLogger";
+import { useTranslation } from "react-i18next";
 
 export function useSelectedSubject() {
+  const { t } = useTranslation();
   const realm = useRealm();
   const subjects = useQuery(Subject);
   const users = useQuery(User);
@@ -24,7 +26,7 @@ export function useSelectedSubject() {
     if (currentUser && subjects.length > 0) {
       initializeSelectedSubject();
     }
-  }, [currentUser, subjects]);
+  }, [currentUser, subjects, t]);
 
   const initializeSelectedSubject = async () => {
     try {
@@ -56,7 +58,8 @@ export function useSelectedSubject() {
         }
       }
 
-      const generalSubject = subjectRepo.getByName("General");
+      const defaultSubjectName = t('subjects.defaultSubjectName', 'Default');
+      const generalSubject = subjectRepo.getByName(defaultSubjectName);
       if (generalSubject) {
         const result = {
           id: generalSubject._id.toString(),
@@ -118,7 +121,8 @@ export function useSelectedSubject() {
     try {
       DatabaseLogger.logHook("useSelectedSubject", "createGeneralSubject");
 
-      const generalSubject = subjectRepo.create("General", "#007AFF");
+      const defaultSubjectName = t('subjects.defaultSubjectName', 'Default');
+      const generalSubject = subjectRepo.create(defaultSubjectName, "#007AFF");
       setSelectedSubject(generalSubject);
 
       if (currentUser) {

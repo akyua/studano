@@ -36,8 +36,8 @@ export default function SubjectSelector({ onSubjectChange }: SubjectSelectorProp
       setModalVisible(false);
     } else {
       Alert.alert(
-        t('subjects.errorTitle', 'Error'),
-        t('subjects.createError', 'Could not create General subject')
+        t('common.error', 'Error'),
+        t('subjects.createError', 'Could not create Default subject')
       );
     }
   };

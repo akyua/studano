@@ -1,6 +1,7 @@
 import { useRealm } from "@/database/RealmContext";
 import { Day } from "@/models/Day";
 import { DatabaseLogger } from "@/utils/databaseLogger";
+import { BSON } from "realm";
 
 export class DayRepository {
   private realm: Realm;
@@ -46,7 +47,7 @@ export class DayRepository {
       this.realm.write(() => {
         daysData.forEach((dayData) => {
           this.realm.create<Day>("Day", {
-            _id: new Realm.BSON.ObjectId(),
+            _id: new BSON.ObjectId(),
             ...dayData,
           });
         });

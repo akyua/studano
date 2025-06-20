@@ -3,38 +3,43 @@ import { Subject } from "../models/Subject";
 import { PomodoroSession } from "../models/PomodoroSession";
 import { useRealm } from "@/database/RealmContext";
 import { DatabaseLogger } from "@/utils/databaseLogger";
+import { BSON } from "realm";
 
 export class SubjectRepository {
-  realm: Realm;
+  private realm: Realm;
 
   constructor() {
     this.realm = useRealm();
   }
 
   create(name: string, color: string): Subject {
-    const request = { name, color };
-
     try {
-      let subject!: Subject;
+      const request = { name, color };
+      DatabaseLogger.logOperation("Subject", "create", request);
 
+      let newSubject: Subject | undefined;
       this.realm.write(() => {
-        subject = this.realm.create<Subject>("Subject", {
-          _id: new Realm.BSON.ObjectId(),
+        newSubject = this.realm.create<Subject>("Subject", {
+          _id: new BSON.ObjectId(),
           name,
+          sessionDuration: 1500,
           sessions: [],
         });
       });
 
+      if (!newSubject) {
+        throw new Error("Failed to create subject");
+      }
+
       const result = {
-        id: subject._id.toString(),
-        name: subject.name,
-        sessionsCount: subject.sessions.length,
+        id: newSubject._id.toString(),
+        name: newSubject.name,
       };
 
-      DatabaseLogger.logOperation("Subject", "create", request, result);
-      return subject;
+      DatabaseLogger.logOperation("Subject", "create", undefined, result);
+      return newSubject;
     } catch (error) {
-      DatabaseLogger.logOperation("Subject", "create", request, undefined, error);
+      DatabaseLogger.logOperation("Subject", "create", undefined, undefined, error);
       throw error;
     }
   }
@@ -124,16 +129,16 @@ export class SubjectRepository {
     }
   }
 
-  getAll() {
+  getAll(): Subject[] {
     try {
-      const subjects = this.realm.objects<Subject>("Subject");
+      const subjects = this.realm.objects<Subject>("Subject").sorted("name");
       const result = { count: subjects.length };
 
       DatabaseLogger.logOperation("Subject", "getAll", undefined, result);
-      return subjects;
+      return Array.from(subjects);
     } catch (error) {
       DatabaseLogger.logOperation("Subject", "getAll", undefined, undefined, error);
-      throw error;
+      return [];
     }
   }
 

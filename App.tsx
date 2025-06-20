@@ -1,3 +1,4 @@
+import 'react-native-get-random-values';
 import React, { useEffect } from 'react';
 import "./i18n";
 import { NavigationContainer } from '@react-navigation/native';
