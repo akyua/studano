@@ -16,6 +16,7 @@ export function useSelectedSubject() {
 
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   const currentUser = users[0];
 
@@ -95,6 +96,7 @@ export function useSelectedSubject() {
       DatabaseLogger.logHook("useSelectedSubject", "changeSubject", request);
 
       setSelectedSubject(subject);
+      setForceUpdate(prev => prev + 1);
 
       if (currentUser) {
         if (subject) {
@@ -147,6 +149,7 @@ export function useSelectedSubject() {
     isLoading,
     changeSelectedSubject,
     createGeneralSubject,
+    forceUpdate,
   };
 }
 

@@ -1,14 +1,20 @@
 // src/components/PomodoroComponent.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { usePomodoroTimer, PomodoroTimerResult } from '@/hooks/usePomodoroTimer';
+import { Subject } from '@/models/Subject';
 
 const RADIUS = 80;
 const STROKE_WIDTH = 8;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function Pomodoro() {
+interface PomodoroProps {
+  selectedSubject?: Subject | null;
+  onResetRef?: (resetFunction: () => void) => void;
+}
+
+export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps) {
   const {
     isRunning,
     formattedTime,
@@ -17,7 +23,13 @@ export default function Pomodoro() {
     resetTimer,
     secondsLeft,
     initialTime,
-  }: PomodoroTimerResult = usePomodoroTimer();
+  }: PomodoroTimerResult = usePomodoroTimer(10, selectedSubject);
+
+  useEffect(() => {
+    if (onResetRef) {
+      onResetRef(resetTimer);
+    }
+  }, [onResetRef, resetTimer]);
 
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
 
@@ -55,8 +67,11 @@ export default function Pomodoro() {
         <TouchableOpacity
           onPress={toggleTimer}
           style={styles.button}
+          disabled={!selectedSubject}
         >
-          <Text style={styles.buttonText}>{isRunning ? 'Pause' : 'Start'}</Text>
+          <Text style={[styles.buttonText, !selectedSubject && styles.disabledButtonText]}>
+            {isRunning ? 'Pause' : 'Start'}
+          </Text>
         </TouchableOpacity>
         {secondsLeft < initialTime && (
           <TouchableOpacity
@@ -101,6 +116,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  disabledButtonText: {
+    color: '#999',
   },
   buttonsContainer: {
     flexDirection: 'row',

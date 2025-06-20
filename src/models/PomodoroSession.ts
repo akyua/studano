@@ -6,7 +6,9 @@ export class PomodoroSession extends Realm.Object<PomodoroSession> {
   startTime!: Date;
   endTime?: Date;
   duration!: number;
+  remainingTime!: number;
   completed!: boolean;
+  paused!: boolean;
   subjectId?: BSON.ObjectId;
 
   static primaryKey = "_id";

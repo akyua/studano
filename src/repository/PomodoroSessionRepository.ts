@@ -22,7 +22,9 @@ export class PomodoroSessionRepository {
           startTime: now,
           endTime: new Date(now.getTime() + duration * 1000),
           duration,
+          remainingTime: duration,
           completed: false,
+          paused: false,
           subjectId,
         });
       });
@@ -31,6 +33,7 @@ export class PomodoroSessionRepository {
         id: session._id.toString(),
         startTime: session.startTime,
         duration: session.duration,
+        remainingTime: session.remainingTime,
         subjectId: session.subjectId?.toString() || "null",
       };
 
@@ -38,6 +41,93 @@ export class PomodoroSessionRepository {
       return session;
     } catch (error) {
       DatabaseLogger.logOperation("PomodoroSession", "create", request, undefined, error);
+      throw error;
+    }
+  }
+
+  pause(sessionId: Realm.BSON.ObjectId, remainingTime: number): PomodoroSession | null {
+    const request = { sessionId: sessionId.toString(), remainingTime };
+
+    try {
+      const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+
+      if (session) {
+        this.realm.write(() => {
+          session.paused = true;
+          session.remainingTime = remainingTime;
+        });
+
+        const result = {
+          id: session._id.toString(),
+          paused: session.paused,
+          remainingTime: session.remainingTime,
+        };
+
+        DatabaseLogger.logOperation("PomodoroSession", "pause", request, result);
+        return session;
+      }
+
+      DatabaseLogger.logOperation("PomodoroSession", "pause", request, null);
+      return null;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "pause", request, undefined, error);
+      throw error;
+    }
+  }
+
+  resume(sessionId: Realm.BSON.ObjectId): PomodoroSession | null {
+    const request = { sessionId: sessionId.toString() };
+
+    try {
+      const session = this.realm.objectForPrimaryKey<PomodoroSession>("PomodoroSession", sessionId);
+
+      if (session) {
+        this.realm.write(() => {
+          session.paused = false;
+        });
+
+        const result = {
+          id: session._id.toString(),
+          paused: session.paused,
+          remainingTime: session.remainingTime,
+        };
+
+        DatabaseLogger.logOperation("PomodoroSession", "resume", request, result);
+        return session;
+      }
+
+      DatabaseLogger.logOperation("PomodoroSession", "resume", request, null);
+      return null;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "resume", request, undefined, error);
+      throw error;
+    }
+  }
+
+  getActiveSessionForSubject(subjectId: Realm.BSON.ObjectId): PomodoroSession | null {
+    const request = { subjectId: subjectId.toString() };
+
+    try {
+      const session = this.realm
+        .objects<PomodoroSession>("PomodoroSession")
+        .filtered("subjectId == $0 AND completed == false", subjectId)
+        .sorted("startTime", true)[0];
+
+      if (session) {
+        const result = {
+          id: session._id.toString(),
+          remainingTime: session.remainingTime,
+          paused: session.paused,
+        };
+
+        DatabaseLogger.logOperation("PomodoroSession", "getActiveSessionForSubject", request, result);
+      } else {
+        DatabaseLogger.logOperation("PomodoroSession", "getActiveSessionForSubject", request, null);
+      }
+
+      return session || null;
+    } catch (error) {
+      DatabaseLogger.logOperation("PomodoroSession", "getActiveSessionForSubject", request, undefined, error);
       throw error;
     }
   }
@@ -60,6 +150,7 @@ export class PomodoroSessionRepository {
         this.realm.write(() => {
           session.completed = true;
           session.endTime = new Date();
+          session.paused = false;
         });
 
         const result = {
@@ -127,6 +218,7 @@ export class PomodoroSessionRepository {
           id: session._id.toString(),
           startTime: session.startTime,
           completed: session.completed,
+          paused: session.paused,
         };
 
         DatabaseLogger.logOperation("PomodoroSession", "getById", request, result);
