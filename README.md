@@ -97,6 +97,14 @@ Instale as libs:
 npm i
 ```
 
+### [Metodo atual de run]
+Rode no terminal:
+```bash
+npm run dev:android
+```
+
+--------------------------------------------
+### [Metodo antigo de run]
 Rode o Metro para dar reload no Projecto:
 ```bash
 npx react-native start --reset-cache
@@ -105,6 +113,7 @@ Em outro terminal, rode:
 ```bash
 npx react-native run-android 
 ```
+--------------------------------------------
 
 
 ## Padrão de desenvolvimento
