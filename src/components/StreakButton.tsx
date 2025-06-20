@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { TouchableOpacity, Image, StyleSheet, Text } from 'react-native';
 import { HistoryService } from '@/services/historyService';
+import { useTheme } from '@/context/ThemeContext';
 
 interface StreakButtonProps {
   onPress?: () => void;
@@ -8,6 +9,7 @@ interface StreakButtonProps {
 }
 
 export default function StreakButton({ onPress, refreshTrigger }: StreakButtonProps) {
+  const { colors } = useTheme();
   const [streakCount, setStreakCount] = useState(0);
   const historyService = new HistoryService();
 
@@ -22,8 +24,11 @@ export default function StreakButton({ onPress, refreshTrigger }: StreakButtonPr
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      <Image source={require('../../assets/images/fire.png')} style={styles.icon} />
-      <Text style={styles.text}>{streakCount}</Text>
+      <Image 
+        source={require('../../assets/images/fire.png')} 
+        style={[styles.icon, { tintColor: colors.text }]} 
+      />
+      <Text style={[styles.text, { color: colors.text }]}>{streakCount}</Text>
     </TouchableOpacity>
   );
 }
@@ -43,6 +48,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
   }
 });

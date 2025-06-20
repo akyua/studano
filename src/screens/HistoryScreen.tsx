@@ -10,6 +10,7 @@ import { HistoryService } from '@/services/historyService';
 import { Subject } from '@/models/Subject';
 import { useQuery } from '@/database/RealmContext';
 import { PomodoroSession } from '@/models/PomodoroSession';
+import { useTheme } from '@/context/ThemeContext';
 import i18n from '../../i18n';
 
 const chartWidth = Math.max(Dimensions.get("window").width - 32, 800);
@@ -32,6 +33,7 @@ interface DayDetail {
 
 const HistoryScreen = (props: HistoryScreenProps) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<TimeRange>('7');
   const [activeTab, setActiveTab] = useState<'line' | 'bar' | 'calendar'>('line');
@@ -84,7 +86,7 @@ const HistoryScreen = (props: HistoryScreenProps) => {
             datasets: [
               {
                 data,
-                color: () => `rgba(0, 0, 0, 1)`,
+                color: () => colors.primary,
                 strokeWidth: 2,
               },
             ],
@@ -93,20 +95,20 @@ const HistoryScreen = (props: HistoryScreenProps) => {
           height={chartHeight}
           yAxisSuffix="m"
           chartConfig={{
-            backgroundColor: "#fff",
-            backgroundGradientFrom: "#fff",
-            backgroundGradientTo: "#fff",
+            backgroundColor: colors.card,
+            backgroundGradientFrom: colors.card,
+            backgroundGradientTo: colors.card,
             decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            color: (opacity = 1) => colors.primary,
+            labelColor: (opacity = 1) => colors.text,
             style: { borderRadius: 16 },
-            propsForDots: { r: "4", strokeWidth: "2", stroke: "#000000" },
+            propsForDots: { r: "4", strokeWidth: "2", stroke: colors.primary },
           }}
           bezier
           style={styles.chart}
         />
       </ScrollView>
-      <Text style={styles.summary}>
+      <Text style={[styles.summary, { color: colors.textSecondary }]}>
         {selectedSubjectId === 'all'
           ? `${t('history.total_time')}: ${historyService.formatMinutes(overallStats.totalMinutes)}`
           : subjectStatsMap[selectedSubjectId]
@@ -136,18 +138,18 @@ const HistoryScreen = (props: HistoryScreenProps) => {
           yAxisSuffix="m"
           yAxisLabel=""
           chartConfig={{
-            backgroundColor: "#fff",
-            backgroundGradientFrom: "#fff",
-            backgroundGradientTo: "#fff",
+            backgroundColor: colors.card,
+            backgroundGradientFrom: colors.card,
+            backgroundGradientTo: colors.card,
             decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            color: (opacity = 1) => colors.primary,
+            labelColor: (opacity = 1) => colors.text,
             style: { borderRadius: 16 },
           }}
           style={styles.chart}
         />
       </ScrollView>
-      <Text style={styles.summary}>
+      <Text style={[styles.summary, { color: colors.textSecondary }]}>
         {t('history.subject_comparison')} {timeRange} {t('history.days')}
       </Text>
     </View>
@@ -162,13 +164,13 @@ const HistoryScreen = (props: HistoryScreenProps) => {
               key={day.date} 
               style={[
                 styles.calendarDay, 
-                { backgroundColor: day.minutes > 0 ? '#000000' : '#f0f0f0' }
+                { backgroundColor: day.minutes > 0 ? colors.primary : colors.surface }
               ]}
               onPress={() => handleDayPress(day)}
             >
               <Text style={[
                 styles.calendarDayText,
-                { color: day.minutes > 0 ? '#ffffff' : '#333333' }
+                { color: day.minutes > 0 ? colors.surface : colors.text }
               ]}>
                 {new Date(day.date).getDate()}
               </Text>
@@ -176,66 +178,102 @@ const HistoryScreen = (props: HistoryScreenProps) => {
           ))}
         </View>
       </ScrollView>
-      <Text style={styles.summary}>
+      <Text style={[styles.summary, { color: colors.textSecondary }]}>
         {t('history.study_calendar')} {timeRange} {t('history.days')}
       </Text>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.safeAreaContainer}>
+    <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
       <HeaderComponent />
-      <View style={styles.container}>
-        <Text style={styles.title}>{t('history.pomodoro_time_per_day')}</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={[styles.title, { color: colors.text }]}>{t('history.pomodoro_time_per_day')}</Text>
         
-        <View style={styles.streakContainer}>
+        <View style={[styles.streakContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.streakContent}>
             <Image source={require('../../assets/images/fire.png')} style={styles.streakIcon} />
-            <Text style={styles.streakText}>
+            <Text style={[styles.streakText, { color: colors.text }]}>
               {overallStats.studyStreak} {overallStats.studyStreak === 1 ? t('history.study_streak_text') : t('history.study_streak_text_plural')}
             </Text>
           </View>
         </View>
 
-        <View style={styles.timeRangeContainer}>
+        <View style={[styles.timeRangeContainer, { backgroundColor: colors.surface }]}>
           <TouchableOpacity 
-            style={[styles.timeRangeButton, timeRange === '7' && styles.activeTimeRangeButton]} 
+            style={[
+              styles.timeRangeButton, 
+              { backgroundColor: timeRange === '7' ? colors.primary : 'transparent' }
+            ]} 
             onPress={() => setTimeRange('7')}
           >
-            <Text style={[styles.timeRangeText, timeRange === '7' && styles.activeTimeRangeText]}>7D</Text>
+            <Text style={[
+              styles.timeRangeText, 
+              { color: timeRange === '7' ? colors.surface : colors.textSecondary }
+            ]}>7D</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={[styles.timeRangeButton, timeRange === '14' && styles.activeTimeRangeButton]} 
+            style={[
+              styles.timeRangeButton, 
+              { backgroundColor: timeRange === '14' ? colors.primary : 'transparent' }
+            ]} 
             onPress={() => setTimeRange('14')}
           >
-            <Text style={[styles.timeRangeText, timeRange === '14' && styles.activeTimeRangeText]}>14D</Text>
+            <Text style={[
+              styles.timeRangeText, 
+              { color: timeRange === '14' ? colors.surface : colors.textSecondary }
+            ]}>14D</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={[styles.timeRangeButton, timeRange === '30' && styles.activeTimeRangeButton]} 
+            style={[
+              styles.timeRangeButton, 
+              { backgroundColor: timeRange === '30' ? colors.primary : 'transparent' }
+            ]} 
             onPress={() => setTimeRange('30')}
           >
-            <Text style={[styles.timeRangeText, timeRange === '30' && styles.activeTimeRangeText]}>30D</Text>
+            <Text style={[
+              styles.timeRangeText, 
+              { color: timeRange === '30' ? colors.surface : colors.textSecondary }
+            ]}>30D</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.tabContainer}>
+        <View style={[styles.tabContainer, { backgroundColor: colors.surface }]}>
           <TouchableOpacity 
-            style={[styles.tabButton, activeTab === 'line' && styles.activeTabButton]} 
+            style={[
+              styles.tabButton, 
+              { backgroundColor: activeTab === 'line' ? colors.primary : 'transparent' }
+            ]} 
             onPress={() => setActiveTab('line')}
           >
-            <Text style={[styles.tabText, activeTab === 'line' && styles.activeTabText]}>{t('history.timeline')}</Text>
+            <Text style={[
+              styles.tabText, 
+              { color: activeTab === 'line' ? colors.surface : colors.textSecondary }
+            ]}>{t('history.timeline')}</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={[styles.tabButton, activeTab === 'bar' && styles.activeTabButton]} 
+            style={[
+              styles.tabButton, 
+              { backgroundColor: activeTab === 'bar' ? colors.primary : 'transparent' }
+            ]} 
             onPress={() => setActiveTab('bar')}
           >
-            <Text style={[styles.tabText, activeTab === 'bar' && styles.activeTabText]}>{t('history.subjects')}</Text>
+            <Text style={[
+              styles.tabText, 
+              { color: activeTab === 'bar' ? colors.surface : colors.textSecondary }
+            ]}>{t('history.subjects')}</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={[styles.tabButton, activeTab === 'calendar' && styles.activeTabButton]} 
+            style={[
+              styles.tabButton, 
+              { backgroundColor: activeTab === 'calendar' ? colors.primary : 'transparent' }
+            ]} 
             onPress={() => setActiveTab('calendar')}
           >
-            <Text style={[styles.tabText, activeTab === 'calendar' && styles.activeTabText]}>{t('history.calendar')}</Text>
+            <Text style={[
+              styles.tabText, 
+              { color: activeTab === 'calendar' ? colors.surface : colors.textSecondary }
+            ]}>{t('history.calendar')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -243,7 +281,7 @@ const HistoryScreen = (props: HistoryScreenProps) => {
           <>
             <Picker
               selectedValue={selectedSubjectId}
-              style={styles.picker}
+              style={[styles.picker, { color: colors.text }]}
               onValueChange={setSelectedSubjectId}
             >
               <Picker.Item label={t('history.all_subjects')} value="all" />
@@ -252,14 +290,14 @@ const HistoryScreen = (props: HistoryScreenProps) => {
               ))}
             </Picker>
             {chartData.length > 0 ? renderLineChart() : (
-              <Text style={styles.noDataText}>{t('history.no_sessions_found')}</Text>
+              <Text style={[styles.noDataText, { color: colors.textSecondary }]}>{t('history.no_sessions_found')}</Text>
             )}
           </>
         )}
 
         {activeTab === 'bar' && (
           subjectComparison.data.length > 0 ? renderBarChart() : (
-            <Text style={styles.noDataText}>{t('history.no_subject_data')}</Text>
+            <Text style={[styles.noDataText, { color: colors.textSecondary }]}>{t('history.no_subject_data')}</Text>
           )
         )}
 
@@ -272,8 +310,8 @@ const HistoryScreen = (props: HistoryScreenProps) => {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {selectedDay ? new Date(selectedDay.date).toLocaleDateString(i18n.language === 'pt' ? 'pt-BR' : 'en-US', { 
                   weekday: 'long', 
                   year: 'numeric', 
@@ -284,15 +322,15 @@ const HistoryScreen = (props: HistoryScreenProps) => {
               
               {selectedDay && (
                 <>
-                  <Text style={styles.modalTotal}>
+                  <Text style={[styles.modalTotal, { color: colors.text }]}>
                     {t('history.total')}: {historyService.formatMinutes(selectedDay.minutes)} ({selectedDay.sessions} {t('history.sessions')})
                   </Text>
                   
                   {selectedDay.subjects.length > 0 && (
                     <View style={styles.modalSubjects}>
-                      <Text style={styles.modalSubjectsTitle}>{t('history.subjects_label')}</Text>
+                      <Text style={[styles.modalSubjectsTitle, { color: colors.text }]}>{t('history.subjects_label')}</Text>
                       {selectedDay.subjects.map((subject, index) => (
-                        <Text key={index} style={styles.modalSubjectItem}>
+                        <Text key={index} style={[styles.modalSubjectItem, { color: colors.textSecondary }]}>
                           • {subject.name}: {historyService.formatMinutes(subject.minutes)}
                         </Text>
                       ))}
@@ -302,10 +340,10 @@ const HistoryScreen = (props: HistoryScreenProps) => {
               )}
               
               <TouchableOpacity 
-                style={styles.modalCloseButton}
+                style={[styles.modalCloseButton, { backgroundColor: colors.primary }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.modalCloseButtonText}>{t('history.close')}</Text>
+                <Text style={[styles.modalCloseButtonText, { color: colors.surface }]}>{t('history.close')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -326,19 +364,16 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    color: "black",
     fontSize: 20,
     marginBottom: 12,
     fontWeight: 'bold',
   },
   streakContainer: {
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   streakContent: {
     flexDirection: 'row',
@@ -352,12 +387,10 @@ const styles = StyleSheet.create({
   streakText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
   },
   timeRangeContainer: {
     flexDirection: 'row',
     marginBottom: 16,
-    backgroundColor: '#f8f9fa',
     borderRadius: 8,
     padding: 4,
   },
@@ -369,20 +402,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTimeRangeButton: {
-    backgroundColor: '#000000',
   },
   timeRangeText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6c757d',
   },
   activeTimeRangeText: {
-    color: 'white',
   },
   tabContainer: {
     flexDirection: 'row',
     marginBottom: 16,
-    backgroundColor: '#f8f9fa',
     borderRadius: 8,
     padding: 4,
   },
@@ -394,15 +423,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTabButton: {
-    backgroundColor: '#000000',
   },
   tabText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6c757d',
   },
   activeTabText: {
-    color: 'white',
   },
   picker: {
     width: '100%',
@@ -418,7 +444,6 @@ const styles = StyleSheet.create({
   summary: {
     marginTop: 16,
     fontSize: 16,
-    color: 'black',
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -450,7 +475,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
     borderRadius: 16,
     padding: 24,
     margin: 20,
@@ -460,13 +484,11 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
     marginBottom: 16,
     textAlign: 'center',
   },
   modalTotal: {
     fontSize: 16,
-    color: 'black',
     marginBottom: 16,
     textAlign: 'center',
     fontWeight: '600',
@@ -477,31 +499,26 @@ const styles = StyleSheet.create({
   modalSubjectsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: 'black',
     marginBottom: 8,
   },
   modalSubjectItem: {
     fontSize: 14,
-    color: 'black',
     marginBottom: 4,
     paddingLeft: 8,
   },
   modalCloseButton: {
-    backgroundColor: '#000000',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     alignItems: 'center',
   },
   modalCloseButtonText: {
-    color: 'white',
     fontSize: 16,
     fontWeight: '600',
   },
   noDataText: {
     marginTop: 32,
     fontSize: 16,
-    color: 'gray',
     textAlign: 'center',
   },
 });

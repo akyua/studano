@@ -7,7 +7,7 @@ import { Day } from "@/models/Day";
 
 export const realmConfig = {
   schema: [PomodoroSession, Subject, User, UserPreferences, Day],
-  schemaVersion: 2,
+  schemaVersion: 3,
   deleteRealmIfMigrationNeeded: true, // never release the app in production while this is true
 };
 

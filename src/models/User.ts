@@ -7,6 +7,7 @@ export class User extends Realm.Object<User> {
   username!: string;
   streakCount: number = 0;
   lastSessionDate?: Date;
+  theme: string = 'dark';
   subjects!: Realm.List<Subject>;
   preferences?: UserPreferences;
   createdAt: Date = new Date();

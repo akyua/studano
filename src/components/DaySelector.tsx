@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTheme } from '@/context/ThemeContext';
 
 interface DayData {
   id: string;
@@ -13,6 +14,8 @@ interface DaySelectorProps {
 }
 
 const DaySelector: React.FC<DaySelectorProps> = ({ days, selectedDayIds, onDayToggle }) => {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.container}>
       {days.map((day) => (
@@ -20,14 +23,19 @@ const DaySelector: React.FC<DaySelectorProps> = ({ days, selectedDayIds, onDayTo
           key={day.id}
           style={[
             styles.dayButton,
-            selectedDayIds.includes(day.id) ? styles.selectedDayButton : styles.unselectedDayButton,
+            { borderColor: colors.border },
+            selectedDayIds.includes(day.id) 
+              ? [styles.selectedDayButton, { backgroundColor: colors.primary, borderColor: colors.primary }]
+              : [styles.unselectedDayButton, { backgroundColor: colors.surface }]
           ]}
           onPress={() => onDayToggle(day.id)}
         >
           <Text
             style={[
               styles.dayText,
-              selectedDayIds.includes(day.id) ? styles.selectedDayText : styles.unselectedDayText,
+              selectedDayIds.includes(day.id) 
+                ? [styles.selectedDayText, { color: colors.surface }]
+                : [styles.unselectedDayText, { color: colors.text }]
             ]}
           >
             {day.day}
@@ -52,25 +60,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
     marginHorizontal: 4,
   },
   selectedDayButton: {
-    backgroundColor: '#000',
-    borderColor: '#000',
   },
   unselectedDayButton: {
-    backgroundColor: '#fff',
   },
   dayText: {
     fontSize: 16,
     fontWeight: 'bold',
   },
   selectedDayText: {
-    color: '#fff',
   },
   unselectedDayText: {
-    color: '#000',
   },
 });
 

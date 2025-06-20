@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/context/ThemeContext';
 
 interface CustomTimePickerModalProps {
   visible: boolean;
@@ -26,6 +27,7 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
   initialTime = new Date(),
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [selectedHour, setSelectedHour] = useState(initialTime.getHours());
   const [selectedMinute, setSelectedMinute] = useState(initialTime.getMinutes());
   const [isAM, setIsAM] = useState(initialTime.getHours() < 12);
@@ -76,7 +78,7 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
     label: string
   ) => (
     <View style={styles.pickerColumn}>
-      <Text style={styles.columnLabel}>{label}</Text>
+      <Text style={[styles.columnLabel, { color: colors.textSecondary }]}>{label}</Text>
       <ScrollView
         style={styles.pickerScrollView}
         showsVerticalScrollIndicator={false}
@@ -88,14 +90,15 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
             key={index}
             style={[
               styles.pickerItem,
-              selectedValue === (label === 'Hour' ? parseInt(item) : index) && styles.selectedPickerItem,
+              selectedValue === (label === 'Hour' ? parseInt(item) : index) && [styles.selectedPickerItem, { backgroundColor: colors.primary }],
             ]}
             onPress={() => onValueChange(label === 'Hour' ? parseInt(item) : index)}
           >
             <Text
               style={[
                 styles.pickerItemText,
-                selectedValue === (label === 'Hour' ? parseInt(item) : index) && styles.selectedPickerItemText,
+                { color: colors.text },
+                selectedValue === (label === 'Hour' ? parseInt(item) : index) && [styles.selectedPickerItemText, { color: colors.surface }],
               ]}
             >
               {item}
@@ -114,8 +117,8 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{t('timePicker.selectTime', 'Select Time')}</Text>
+        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+          <Text style={[styles.modalTitle, { color: colors.text }]}>{t('timePicker.selectTime', 'Select Time')}</Text>
 
           <View style={styles.pickerContainer}>
             {renderPickerColumn(hours, selectedHour, setSelectedHour, 'Hour')}
@@ -123,18 +126,34 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
 
             <View style={styles.meridiemColumn}>
               <TouchableOpacity
-                style={[styles.meridiemButton, isAM && styles.selectedMeridiemButton]}
+                style={[
+                  styles.meridiemButton, 
+                  { borderColor: colors.border },
+                  isAM && [styles.selectedMeridiemButton, { backgroundColor: colors.primary, borderColor: colors.primary }]
+                ]}
                 onPress={() => setIsAM(true)}
               >
-                <Text style={[styles.meridiemText, isAM && styles.selectedMeridiemText]}>
+                <Text style={[
+                  styles.meridiemText, 
+                  { color: colors.text },
+                  isAM && [styles.selectedMeridiemText, { color: colors.surface }]
+                ]}>
                   AM
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.meridiemButton, !isAM && styles.selectedMeridiemButton]}
+                style={[
+                  styles.meridiemButton, 
+                  { borderColor: colors.border },
+                  !isAM && [styles.selectedMeridiemButton, { backgroundColor: colors.primary, borderColor: colors.primary }]
+                ]}
                 onPress={() => setIsAM(false)}
               >
-                <Text style={[styles.meridiemText, !isAM && styles.selectedMeridiemText]}>
+                <Text style={[
+                  styles.meridiemText, 
+                  { color: colors.text },
+                  !isAM && [styles.selectedMeridiemText, { color: colors.surface }]
+                ]}>
                   PM
                 </Text>
               </TouchableOpacity>
@@ -142,11 +161,17 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>{t('common.cancel', 'Cancel')}</Text>
+            <TouchableOpacity 
+              style={[styles.cancelButton, { backgroundColor: colors.secondary }]} 
+              onPress={onClose}
+            >
+              <Text style={[styles.cancelButtonText, { color: colors.surface }]}>{t('common.cancel', 'Cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleTimeSelect}>
-              <Text style={styles.confirmButtonText}>{t('common.confirm', 'Confirm')}</Text>
+            <TouchableOpacity 
+              style={[styles.confirmButton, { backgroundColor: colors.primary }]} 
+              onPress={handleTimeSelect}
+            >
+              <Text style={[styles.confirmButtonText, { color: colors.surface }]}>{t('common.confirm', 'Confirm')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -163,7 +188,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
     width: screenWidth * 0.9,
@@ -187,7 +211,6 @@ const styles = StyleSheet.create({
   },
   columnLabel: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 10,
   },
   pickerScrollView: {
@@ -201,17 +224,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   selectedPickerItem: {
-    backgroundColor: '#E3F2FD',
     borderRadius: 8,
   },
   pickerItemText: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
     textAlignVertical: 'center',
   },
   selectedPickerItemText: {
-    color: '#007AFF',
   },
   meridiemColumn: {
     marginLeft: 15,
@@ -223,20 +243,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     marginBottom: 5,
-    backgroundColor: '#F2F2F7',
     alignItems: 'center',
     flex: 1,
+    borderWidth: 1,
   },
   selectedMeridiemButton: {
-    backgroundColor: '#007AFF',
   },
   meridiemText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
   },
   selectedMeridiemText: {
-    color: 'white',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -245,7 +262,6 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     padding: 15,
-    backgroundColor: '#F2F2F7',
     borderRadius: 10,
     marginRight: 10,
     alignItems: 'center',
@@ -253,7 +269,6 @@ const styles = StyleSheet.create({
   confirmButton: {
     flex: 1,
     padding: 15,
-    backgroundColor: '#007AFF',
     borderRadius: 10,
     marginLeft: 10,
     alignItems: 'center',
@@ -261,12 +276,10 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#666',
   },
   confirmButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
   },
 });
 

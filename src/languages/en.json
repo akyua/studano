@@ -6,6 +6,9 @@
   "settings": {
     "title": "Settings",
     "languageSelectionTitle": "Select Language",
+    "themeSelectionTitle": "Select Theme",
+    "lightTheme": "Light",
+    "darkTheme": "Dark",
     "aboutStudanoTitle": "About Studano",
     "whatIs": "What is it?",
     "whatIsDescription": "Studano is an app designed to help you organize your study routine and stay on track with your goals.",
