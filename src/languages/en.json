@@ -6,6 +6,9 @@
   "settings": {
     "title": "Settings",
     "languageSelectionTitle": "Select Language",
+    "themeSelectionTitle": "Select Theme",
+    "lightTheme": "Light",
+    "darkTheme": "Dark",
     "aboutStudanoTitle": "About Studano",
     "whatIs": "What is it?",
     "whatIsDescription": "Studano is an app designed to help you organize your study routine and stay on track with your goals.",
@@ -27,12 +30,17 @@
     "editSubjectModalTitle": "Edit Subject",
     "addSubjectModalTitle": "New Subject",
     "subjectNamePlaceholder": "Subject name",
+    "nameLabel": "Name:",
+    "sessionDurationLabel": "Session Duration (minutes):",
+    "sessionDurationPlaceholder": "25",
+    "sessionDuration": "{{duration}}",
     "cancelButton": "Cancel",
     "addButton": "Add",
     "updateButton": "Update",
     "deleteButton": "Delete",
     "deleteConfirmationTitle": "Confirm Deletion",
-    "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?"
+    "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?",
+    "noSubjects": "No subjects yet"
   },
   "schedules": {
     "title": "Schedule",
@@ -62,6 +70,39 @@
   },
   "history": {
     "title": "History",
-    "message": "This will be the History screen"
+    "message": "This will be the History screen",
+    "pomodoro_time_per_day": "Pomodoro Time Per Day",
+    "all_subjects": "All Subjects",
+    "total_time": "Total Time",
+    "study_streak": "Study Streak",
+    "timeline": "Timeline",
+    "subjects": "Subjects",
+    "calendar": "Calendar",
+    "study_streak_text": "day study streak!",
+    "study_streak_text_plural": "days study streak!",
+    "subject_comparison": "Subject Comparison - Last",
+    "study_calendar": "Study Calendar - Last",
+    "days": "days",
+    "no_sessions_found": "No pomodoro sessions found for the selected period.",
+    "no_subject_data": "No subject data found for the selected period.",
+    "total": "Total",
+    "sessions": "sessions",
+    "subjects_label": "Subjects:",
+    "close": "Close"
+  },
+  "pomodoro": {
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Reset"
+  },
+  "common": {
+    "loading_subjects": "Loading subjects...",
+    "error": "Error",
+    "failed_to_create_subject": "Failed to create subject. Please try again.",
+    "failed_to_update_subject": "Failed to update subject. Please try again.",
+    "failed_to_delete_subject": "Failed to delete subject. Please try again.",
+    "cannot_delete": "Cannot Delete",
+    "must_have_one_subject": "You must have at least one subject. Please create another subject before deleting this one.",
+    "ok": "OK"
   }
 }

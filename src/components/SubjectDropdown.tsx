@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@/database/RealmContext";
 import { Subject } from "@/models/Subject";
 import { useSelectedSubject } from "@/hooks/useSelectedSubject";
+import { useTheme } from '@/context/ThemeContext';
 
 interface SubjectDropdownProps {
   onSubjectChange?: (subject: Subject | null) => void;
@@ -11,6 +12,7 @@ interface SubjectDropdownProps {
 
 export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { selectedSubject, changeSelectedSubject } = useSelectedSubject();
   const subjects = useQuery(Subject).sorted("name");
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -33,7 +35,7 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
 
   const getDisplayText = () => {
     if (subjects.length === 0) {
-      return "Loading subjects...";
+      return t('common.loading_subjects');
     }
     return getSubjectDisplayName();
   };
@@ -42,13 +44,15 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
     <TouchableOpacity
       style={[
         styles.dropdownItem,
-        selectedSubject?._id.equals(item._id) && styles.selectedDropdownItem
+        { borderBottomColor: colors.border },
+        selectedSubject?._id.equals(item._id) && [styles.selectedDropdownItem, { backgroundColor: colors.surface }]
       ]}
       onPress={() => handleSubjectSelect(item)}
     >
       <Text style={[
         styles.dropdownItemText,
-        selectedSubject?._id.equals(item._id) && styles.selectedDropdownItemText
+        { color: colors.text },
+        selectedSubject?._id.equals(item._id) && [styles.selectedDropdownItemText, { color: colors.primary }]
       ]}>
         {item.name}
       </Text>
@@ -56,13 +60,16 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
   );
 
   return (
-    <View style={styles.dropdownContainer}>
+    <View style={[styles.dropdownContainer, { backgroundColor: colors.background }]}>
       <TouchableOpacity
-        style={styles.dropdownButton}
+        style={[styles.dropdownButton, { 
+          backgroundColor: colors.surface, 
+          borderColor: colors.border 
+        }]}
         onPress={() => setDropdownVisible(!dropdownVisible)}
       >
-        <Text style={styles.dropdownButtonText}>{getDisplayText()}</Text>
-        <Text style={styles.dropdownArrow}>{dropdownVisible ? '▲' : '▼'}</Text>
+        <Text style={[styles.dropdownButtonText, { color: colors.text }]}>{getDisplayText()}</Text>
+        <Text style={[styles.dropdownArrow, { color: colors.textSecondary }]}>{dropdownVisible ? '▲' : '▼'}</Text>
       </TouchableOpacity>
 
       <Modal
@@ -76,7 +83,7 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
           activeOpacity={1}
           onPress={() => setDropdownVisible(false)}
         >
-          <View style={styles.dropdownModal}>
+          <View style={[styles.dropdownModal, { backgroundColor: colors.card }]}>
             <FlatList
               data={subjects}
               renderItem={renderSubjectItem}
@@ -92,7 +99,6 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
 
 const styles = StyleSheet.create({
   dropdownContainer: {
-    backgroundColor: '#e0e0e0',
     paddingHorizontal: 16,
     paddingVertical: 12,
     zIndex: 1,
@@ -103,9 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 15,
     paddingVertical: 12,
-    backgroundColor: '#f8f9fa',
     borderWidth: 1,
-    borderColor: '#dee2e6',
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -117,12 +121,10 @@ const styles = StyleSheet.create({
   dropdownButtonText: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
     fontWeight: '500',
   },
   dropdownArrow: {
     fontSize: 16,
-    color: '#666',
     marginLeft: 8,
   },
   modalOverlay: {
@@ -133,7 +135,6 @@ const styles = StyleSheet.create({
     paddingTop: 100,
   },
   dropdownModal: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     width: '90%',
     maxHeight: 300,
@@ -151,18 +152,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   selectedDropdownItem: {
-    backgroundColor: '#e3f2fd',
     borderBottomColor: '#bbdefb',
   },
   dropdownItemText: {
     fontSize: 16,
-    color: '#333',
   },
   selectedDropdownItemText: {
     fontWeight: '600',
-    color: '#1976d2',
   },
 }); 

@@ -20,31 +20,37 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRealm, useQuery } from "@/database/RealmContext";
 import { Subject } from "@/models/Subject";
 import { Realm } from "realm";
+import { useTheme } from '@/context/ThemeContext';
 
 const SubjectsScreen = (props: SubjectsScreenProps) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const realm = useRealm();
   const subjects = useQuery(Subject).sorted("name");
 
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [newSubject, setNewSubject] = useState("");
+  const [sessionDuration, setSessionDuration] = useState("25");
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
 
   const handleAddSubject = () => {
     if (newSubject.trim() !== "") {
       try {
+        const durationInSeconds = parseInt(sessionDuration) * 60;
         realm.write(() => {
           realm.create<Subject>("Subject", {
             _id: new Realm.BSON.ObjectId(),
             name: newSubject.trim(),
+            sessionDuration: durationInSeconds,
             sessions: [],
           });
         });
         setNewSubject("");
+        setSessionDuration("25");
         setModalVisible(false);
       } catch (error) {
-        Alert.alert("Error", "Failed to create subject. Please try again.");
+        Alert.alert(t('common.error'), t('common.failed_to_create_subject'));
       }
     }
   };
@@ -52,20 +58,24 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const handleEditSubject = (subject: Subject) => {
     setEditingSubject(subject);
     setNewSubject(subject.name);
+    setSessionDuration((subject.sessionDuration / 60).toString());
     setModalVisible(true);
   };
 
   const handleUpdateSubject = () => {
     if (editingSubject && newSubject.trim() !== "") {
       try {
+        const durationInSeconds = parseInt(sessionDuration) * 60;
         realm.write(() => {
           editingSubject.name = newSubject.trim();
+          editingSubject.sessionDuration = durationInSeconds;
         });
         setNewSubject("");
+        setSessionDuration("25");
         setEditingSubject(null);
         setModalVisible(false);
       } catch (error) {
-        Alert.alert("Error", "Failed to update subject. Please try again.");
+        Alert.alert(t('common.error'), t('common.failed_to_update_subject'));
       }
     }
   };
@@ -73,14 +83,14 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const handleDeleteSubject = (subjectToDelete: Subject) => {
     if (subjects.length <= 1) {
       Alert.alert(
-        "Cannot Delete",
-        "You must have at least one subject. Please create another subject before deleting this one.",
-        [{ text: "OK" }]
+        t('common.cannot_delete'),
+        t('common.must_have_one_subject'),
+        [{ text: t('common.ok') }]
       );
       return;
     }
 
-    const message = `Are you sure you want to delete '${subjectToDelete.name}'?`;
+    const message = t('subjects.deleteConfirmationMessage', { subjectName: subjectToDelete.name });
     Alert.alert(
       t("subjects.deleteConfirmationTitle"),
       message,
@@ -98,7 +108,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
                 realm.delete(subjectToDelete);
               });
             } catch (error) {
-              Alert.alert("Error", "Failed to delete subject. Please try again.");
+              Alert.alert(t('common.error'), t('common.failed_to_delete_subject'));
             }
           },
           style: "destructive",
@@ -111,14 +121,21 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const filteredSubjects = subjects.filtered("name CONTAINS[c] $0", searchText);
 
   const renderItem = ({ item }: { item: Subject }) => (
-    <View style={styles.subjectItem}>
-      <View style={styles.subjectBullet} />
-      <Text style={styles.subjectName}>{item.name}</Text>
+    <View style={[styles.subjectItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View style={styles.subjectInfo}>
+        <View style={[styles.subjectBullet, { backgroundColor: colors.primary }]} />
+        <View style={styles.subjectDetails}>
+          <Text style={[styles.subjectName, { color: colors.text }]}>{item.name}</Text>
+          <Text style={[styles.subjectDuration, { color: colors.textSecondary }]}>
+            {t('subjects.sessionDuration', { duration: item.sessionDuration / 60 })} min
+          </Text>
+        </View>
+      </View>
       <View style={styles.subjectActions}>
         <TouchableOpacity onPress={() => handleEditSubject(item)} style={styles.actionButton}>
           <Image
             source={require("@/../assets/images/edit.png")}
-            style={[styles.actionIcon, { tintColor: "#000000" }]}
+            style={[styles.actionIcon, { tintColor: colors.primary }]}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -134,7 +151,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
             style={[
               styles.actionIcon,
               {
-                tintColor: subjects.length <= 1 ? "#999999" : "#FF3B30"
+                tintColor: subjects.length <= 1 ? colors.textSecondary : colors.error
               }
             ]}
           />
@@ -144,30 +161,30 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   );
 
   return (
-    <SafeAreaView style={styles.safeAreaContainer}>
+    <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
       <HeaderComponent />
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View style={styles.contentContainer}>
-          <View style={styles.searchContainer}>
+        <View style={[styles.contentContainer, { backgroundColor: colors.background }]}>
+          <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Image
               source={require("@/../assets/images/search.png")}
-              style={styles.icon}
+              style={[styles.icon, { tintColor: colors.textSecondary }]}
             />
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, { color: colors.text }]}
               placeholder={t("subjects.searchPlaceholder")}
-              placeholderTextColor="#888"
+              placeholderTextColor={colors.textSecondary}
               value={searchText}
               onChangeText={setSearchText}
             />
           </View>
 
           <TouchableOpacity
-            style={styles.addButton}
+            style={[styles.addButton, { backgroundColor: colors.primary }]}
             onPress={() => {
               setEditingSubject(null);
               setNewSubject("");
@@ -176,9 +193,9 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
           >
             <Image
               source={require("@/../assets/images/plus.png")}
-              style={styles.icon}
+              style={[styles.icon, { tintColor: colors.surface }]}
             />
-            <Text style={styles.addButtonText}>{t("subjects.addSubjectButton")}</Text>
+            <Text style={[styles.addButtonText, { color: colors.surface }]}>{t("subjects.addSubjectButton")}</Text>
           </TouchableOpacity>
 
           <FlatList
@@ -198,36 +215,56 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
             setModalVisible(false);
             setEditingSubject(null);
             setNewSubject("");
+            setSessionDuration("25");
           }}
         >
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalTitle}>
+            <View style={[styles.modalView, { backgroundColor: colors.card }]}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {editingSubject ? t("subjects.editSubjectModalTitle") : t("subjects.addSubjectModalTitle")}
               </Text>
+              <Text style={[styles.modalLabel, { color: colors.text }]}>{t("subjects.nameLabel")}</Text>
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, { 
+                  color: colors.text, 
+                  borderColor: colors.border,
+                  backgroundColor: colors.surface 
+                }]}
                 placeholder={t("subjects.subjectNamePlaceholder")}
-                placeholderTextColor="#888"
+                placeholderTextColor={colors.textSecondary}
                 value={newSubject}
                 onChangeText={setNewSubject}
               />
+              <Text style={[styles.modalLabel, { color: colors.text }]}>{t("subjects.sessionDurationLabel")}</Text>
+              <TextInput
+                style={[styles.modalInput, { 
+                  color: colors.text, 
+                  borderColor: colors.border,
+                  backgroundColor: colors.surface 
+                }]}
+                placeholder={t("subjects.sessionDurationPlaceholder")}
+                placeholderTextColor={colors.textSecondary}
+                value={sessionDuration}
+                onChangeText={setSessionDuration}
+                keyboardType="numeric"
+              />
               <View style={styles.modalButtons}>
                 <TouchableOpacity
-                  style={[styles.button, styles.buttonCancel]}
+                  style={[styles.button, styles.buttonCancel, { backgroundColor: colors.secondary }]}
                   onPress={() => {
                     setModalVisible(false);
                     setEditingSubject(null);
                     setNewSubject("");
+                    setSessionDuration("25");
                   }}
                 >
-                  <Text style={styles.buttonText}>{t("subjects.cancelButton")}</Text>
+                  <Text style={[styles.buttonText, { color: colors.surface }]}>{t("subjects.cancelButton")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.button, styles.buttonAdd]}
+                  style={[styles.button, styles.buttonAdd, { backgroundColor: colors.primary }]}
                   onPress={editingSubject ? handleUpdateSubject : handleAddSubject}
                 >
-                  <Text style={styles.buttonText}>
+                  <Text style={[styles.buttonText, { color: colors.surface }]}>
                     {editingSubject ? t("subjects.updateButton") : t("subjects.addButton")}
                   </Text>
                 </TouchableOpacity>
@@ -243,7 +280,6 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
 const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
   },
   contentContainer: {
     flex: 1,
@@ -251,13 +287,11 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     borderRadius: 8,
     marginHorizontal: 20,
     marginVertical: 15,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: '#CCC',
   },
   icon: {
     width: 20,
@@ -268,20 +302,17 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: 16,
-    color: 'black',
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
     borderRadius: 8,
     marginHorizontal: 20,
     paddingVertical: 12,
     marginBottom: 15,
   },
   addButtonText: {
-    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 5,
@@ -296,7 +327,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 12,
-    backgroundColor: '#FFF',
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: '#000',
@@ -305,17 +335,25 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
   },
+  subjectInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   subjectBullet: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'black',
     marginRight: 12,
+  },
+  subjectDetails: {
+    flexDirection: 'column',
   },
   subjectName: {
     flex: 1,
-    color: 'black',
     fontSize: 16,
+  },
+  subjectDuration: {
+    fontSize: 14,
   },
   subjectActions: {
     flexDirection: 'row',
@@ -340,7 +378,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
     borderRadius: 10,
     padding: 35,
     alignItems: 'center',
@@ -356,17 +393,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'black',
   },
   modalInput: {
     height: 40,
     width: '100%',
-    borderColor: '#CCC',
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
-    color: 'black',
+  },
+  modalLabel: {
+    alignSelf: 'flex-start',
+    marginBottom: 5,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -382,13 +422,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonCancel: {
-    backgroundColor: '#DDDDDD',
   },
   buttonAdd: {
-    backgroundColor: 'black',
   },
   buttonText: {
-    color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
   },

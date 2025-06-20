@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Menu } from "lucide-react-native";
 import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useQuery } from '@/database/RealmContext';
+import { PomodoroSession } from '@/models/PomodoroSession';
 import StreakButton from "@/components/StreakButton.tsx";
+import { useTheme } from '@/context/ThemeContext';
 
 const HeaderComponent = () => {
   const navigation = useNavigation();
+  const { colors } = useTheme();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const sessions = useQuery(PomodoroSession);
+
+  useEffect(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, [sessions.length]);
+
+  const handleStreakPress = () => {
+    navigation.navigate('History' as never);
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-        <Menu size={32} color="black" />
+        <Menu size={32} color={colors.text} />
       </TouchableOpacity>
       <View style={styles.fireContainer}>
-        <StreakButton />
+        <StreakButton onPress={handleStreakPress} refreshTrigger={refreshTrigger} />
       </View>
     </View>
   );
@@ -26,7 +40,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
     elevation: 4,
   },
   fireContainer: {
@@ -36,7 +49,6 @@ const styles = StyleSheet.create({
   fireCount: {
     marginRight: 4,
     fontSize: 16,
-    color: '#000',
   }
 });
 

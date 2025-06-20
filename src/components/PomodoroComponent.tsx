@@ -2,8 +2,10 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { usePomodoroTimer, PomodoroTimerResult } from '@/hooks/usePomodoroTimer';
 import { Subject } from '@/models/Subject';
+import { useTheme } from '@/context/ThemeContext';
 
 const RADIUS = 80;
 const STROKE_WIDTH = 8;
@@ -15,6 +17,9 @@ interface PomodoroProps {
 }
 
 export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const sessionDuration = selectedSubject?.sessionDuration || 1500;
   const {
     isRunning,
     formattedTime,
@@ -23,7 +28,7 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
     resetTimer,
     secondsLeft,
     initialTime,
-  }: PomodoroTimerResult = usePomodoroTimer(10, selectedSubject);
+  }: PomodoroTimerResult = usePomodoroTimer(sessionDuration, selectedSubject);
 
   useEffect(() => {
     if (onResetRef) {
@@ -38,7 +43,7 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
       <View style={styles.circleContainer}>
         <Svg width={RADIUS * 2 + STROKE_WIDTH * 2} height={RADIUS * 2 + STROKE_WIDTH * 2}>
           <Circle
-            stroke="#ddd"
+            stroke={colors.border}
             fill="none"
             cx={RADIUS + STROKE_WIDTH}
             cy={RADIUS + STROKE_WIDTH}
@@ -46,7 +51,7 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
             strokeWidth={STROKE_WIDTH}
           />
           <Circle
-            stroke="#000"
+            stroke={colors.primary}
             fill="none"
             cx={RADIUS + STROKE_WIDTH}
             cy={RADIUS + STROKE_WIDTH}
@@ -60,25 +65,25 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
             originY={RADIUS + STROKE_WIDTH}
           />
         </Svg>
-        <Text style={styles.timer}>{formattedTime}</Text>
+        <Text style={[styles.timer, { color: colors.text }]}>{formattedTime}</Text>
       </View>
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={toggleTimer}
-          style={styles.button}
+          style={[styles.button, { backgroundColor: colors.primary }]}
           disabled={!selectedSubject}
         >
-          <Text style={[styles.buttonText, !selectedSubject && styles.disabledButtonText]}>
-            {isRunning ? 'Pause' : 'Start'}
+          <Text style={[styles.buttonText, { color: colors.surface }, !selectedSubject && styles.disabledButtonText]}>
+            {isRunning ? t('pomodoro.pause') : t('pomodoro.start')}
           </Text>
         </TouchableOpacity>
         {secondsLeft < initialTime && (
           <TouchableOpacity
             onPress={resetTimer}
-            style={[styles.button, { marginLeft: 10, backgroundColor: '#666' }]}
+            style={[styles.button, { marginLeft: 10, backgroundColor: colors.secondary }]}
           >
-            <Text style={styles.buttonText}>Reset</Text>
+            <Text style={[styles.buttonText, { color: colors.surface }]}>{t('pomodoro.reset')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -104,16 +109,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 48,
     fontWeight: '200',
-    color: '#000',
   },
   button: {
-    backgroundColor: '#000',
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 30,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },

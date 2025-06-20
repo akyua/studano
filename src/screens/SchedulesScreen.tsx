@@ -13,9 +13,11 @@ import { Day } from "@/models/Day";
 import { UserPreferencesRepository } from "@/repository/UserPreferencesRepository";
 import { DayRepository } from "@/repository/DayRepository";
 import { scheduleWeeklyNotifications } from '@/services/notificationService';
+import { useTheme } from '@/context/ThemeContext';
 
 const SchedulesScreen = (props: SchedulesScreenProps) => {
   const { t, i18n } = useTranslation();
+  const { colors } = useTheme();
   const isPortuguese = i18n.language === 'pt';
 
   const realm = useRealm();
@@ -113,10 +115,10 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
   }));
 
   return (
-    <SafeAreaView style={styles.safeAreaContainer}>
+    <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
       <HeaderComponent />
-      <View style={styles.container}>
-        <Text style={styles.sectionTitle}>{t("schedules.selectDays")}</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>{t("schedules.selectDays")}</Text>
         <View style={styles.daysContainer}>
           <DaySelector
             days={daysOfWeekData}
@@ -125,32 +127,44 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
           />
         </View>
 
-        <Text style={styles.sectionTitle}>{t("schedules.selectTime")}</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>{t("schedules.selectTime")}</Text>
         <View style={styles.timeRow}>
-          <Text style={styles.timeLabel}>{t("schedules.timeNotification")}</Text>
+          <Text style={[styles.timeLabel, { color: colors.text }]}>{t("schedules.timeNotification")}</Text>
           <TouchableOpacity
-            style={styles.timeInput}
+            style={[styles.timeInput, { 
+              borderColor: colors.border,
+              backgroundColor: colors.surface 
+            }]}
             onPress={() => setIsTimePickerVisible(true)}
           >
-            <Text style={notificationTime ? styles.selectedTimeText : styles.placeholderText}>
+            <Text style={[
+              notificationTime ? styles.selectedTimeText : styles.placeholderText,
+              { color: notificationTime ? colors.text : colors.textSecondary }
+            ]}>
               {formatTimeDisplay(notificationTime, t("schedules.timeNotificationPlaceholder", "12:00 AM"))}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.notificationContainer}>
-          <Text style={styles.notificationText}>{t("schedules.receiveNotifications")}</Text>
+        <View style={[styles.notificationContainer, { 
+          borderTopColor: colors.border,
+          borderBottomColor: colors.border 
+        }]}>
+          <Text style={[styles.notificationText, { color: colors.text }]}>{t("schedules.receiveNotifications")}</Text>
           <Switch
-            trackColor={{ false: "#ccc", true: "#000" }}
-            thumbColor={receiveNotifications ? "#fff" : "#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={receiveNotifications ? colors.surface : colors.textSecondary}
+            ios_backgroundColor={colors.border}
             onValueChange={setReceiveNotifications}
             value={receiveNotifications}
           />
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveSchedule}>
-          <Text style={styles.saveButtonText}>{t("schedules.save", "Save Schedule")}</Text>
+        <TouchableOpacity 
+          style={[styles.saveButton, { backgroundColor: colors.primary }]} 
+          onPress={handleSaveSchedule}
+        >
+          <Text style={[styles.saveButtonText, { color: colors.surface }]}>{t("schedules.save", "Save Schedule")}</Text>
         </TouchableOpacity>
 
         <CustomTimePickerModal
@@ -167,17 +181,14 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
 const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000",
     marginTop: 20,
     marginBottom: 10,
   },
@@ -194,11 +205,9 @@ const styles = StyleSheet.create({
   },
   timeLabel: {
     fontSize: 16,
-    color: "#000",
   },
   timeInput: {
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -208,11 +217,9 @@ const styles = StyleSheet.create({
   },
   selectedTimeText: {
     fontSize: 16,
-    color: '#000',
   },
   placeholderText: {
     fontSize: 16,
-    color: '#999',
   },
   notificationContainer: {
     flexDirection: "row",
@@ -220,24 +227,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 30,
     paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   notificationText: {
     fontSize: 16,
-    color: "#000",
   },
   saveButton: {
-    backgroundColor: "#000",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 40,
   },
   saveButtonText: {
-    color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
   },

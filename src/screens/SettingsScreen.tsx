@@ -4,31 +4,72 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import HeaderComponent from '@/components/HeaderComponent';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@/context/ThemeContext';
 
 function SettingsScreen() {
   const { t, i18n } = useTranslation();
+  const { theme, toggleTheme, colors } = useTheme();
 
   const currentLanguage = i18n.language;
 
   return (
-    <SafeAreaView style={styles.safeAreaContainer}>
+    <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
       <HeaderComponent />
-      <View style={styles.container}>
-        <Text style={styles.screenTitle}>{t('settings.title', 'Settings')}</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>{t('settings.title', 'Settings')}</Text>
 
-        {/* Seção de Seleção de Idioma */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>{t('settings.languageSelectionTitle', 'Select Language:')}</Text>
+        <View style={[styles.sectionContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.themeSelectionTitle', 'Select Theme:')}</Text>
+          <View style={styles.themeButtonsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                { borderColor: colors.border, backgroundColor: colors.surface },
+                theme === 'light' && styles.selectedThemeButton,
+              ]}
+              onPress={() => toggleTheme()}
+            >
+              <Text style={[
+                styles.themeButtonText,
+                { color: colors.textSecondary },
+                theme === 'light' && styles.selectedThemeButtonText,
+              ]}>
+                {t('settings.lightTheme', 'Light')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                { borderColor: colors.border, backgroundColor: colors.surface },
+                theme === 'dark' && styles.selectedThemeButton,
+              ]}
+              onPress={() => toggleTheme()}
+            >
+              <Text style={[
+                styles.themeButtonText,
+                { color: colors.textSecondary },
+                theme === 'dark' && styles.selectedThemeButtonText,
+              ]}>
+                {t('settings.darkTheme', 'Dark')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={[styles.sectionContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.languageSelectionTitle', 'Select Language:')}</Text>
           <View style={styles.languageButtonsContainer}>
             <TouchableOpacity
               style={[
                 styles.languageButton,
+                { borderColor: colors.border, backgroundColor: colors.surface },
                 currentLanguage === 'pt' && styles.selectedLanguageButton,
               ]}
               onPress={() => i18n.changeLanguage('pt')}
             >
               <Text style={[
                 styles.languageButtonText,
+                { color: colors.textSecondary },
                 currentLanguage === 'pt' && styles.selectedLanguageButtonText,
               ]}>
                 PT
@@ -37,12 +78,14 @@ function SettingsScreen() {
             <TouchableOpacity
               style={[
                 styles.languageButton,
+                { borderColor: colors.border, backgroundColor: colors.surface },
                 currentLanguage === 'en' && styles.selectedLanguageButton,
               ]}
               onPress={() => i18n.changeLanguage('en')}
             >
               <Text style={[
                 styles.languageButtonText,
+                { color: colors.textSecondary },
                 currentLanguage === 'en' && styles.selectedLanguageButtonText,
               ]}>
                 EN
@@ -51,15 +94,14 @@ function SettingsScreen() {
           </View>
         </View>
 
-        {/* Seção Sobre o Studano */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>{t('settings.aboutStudanoTitle', 'About Studano:')}</Text>
-          <Text style={styles.aboutText}>
-            <Text style={styles.boldText}>{t('settings.whatIs', 'What is it?')}</Text>{'\n'}
+        <View style={[styles.sectionContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.aboutStudanoTitle', 'About Studano:')}</Text>
+          <Text style={[styles.aboutText, { color: colors.textSecondary }]}>
+            <Text style={[styles.boldText, { color: colors.text }]}>{t('settings.whatIs', 'What is it?')}</Text>{'\n'}
             {t('settings.whatIsDescription', 'Studano is an app designed to help you organize your study routine and stay on track with your goals.')}
           </Text>
-          <Text style={styles.aboutText}>
-            <Text style={styles.boldText}>{t('settings.version', 'Version')}</Text>{' '}1.0.0 (beta)
+          <Text style={[styles.aboutText, { color: colors.textSecondary }]}>
+            <Text style={[styles.boldText, { color: colors.text }]}>{t('settings.version', 'Version')}</Text>{' '}1.0.0 (beta)
           </Text>
         </View>
 
@@ -71,24 +113,19 @@ function SettingsScreen() {
 const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   screenTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 30,
     textAlign: 'center',
   },
   sectionContainer: {
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 10,
     padding: 15,
     marginBottom: 20, 
@@ -101,8 +138,31 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
     marginBottom: 10,
+  },
+  themeButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  themeButton: {
+    flex: 1, 
+    paddingVertical: 12,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  selectedThemeButton: {
+    backgroundColor: '#000', 
+    borderColor: '#000',
+  },
+  themeButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  selectedThemeButtonText: {
+    color: '#fff', 
   },
   languageButtonsContainer: {
     flexDirection: 'row',
@@ -115,9 +175,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
     alignItems: 'center',
-    backgroundColor: '#eee', 
   },
   selectedLanguageButton: {
     backgroundColor: '#000', 
@@ -126,14 +184,12 @@ const styles = StyleSheet.create({
   languageButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#555', 
   },
   selectedLanguageButtonText: {
     color: '#fff', 
   },
   aboutText: {
     fontSize: 15,
-    color: '#333',
     lineHeight: 22, 
     marginBottom: 8,
   },

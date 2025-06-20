@@ -151,12 +151,14 @@ export class PomodoroSessionRepository {
           session.completed = true;
           session.endTime = new Date();
           session.paused = false;
+          session.remainingTime = 0;
         });
 
         const result = {
           id: session._id.toString(),
           completed: session.completed,
           endTime: session.endTime,
+          remainingTime: session.remainingTime,
         };
 
         DatabaseLogger.logOperation("PomodoroSession", "complete", request, result);
@@ -265,7 +267,7 @@ export class PomodoroSessionRepository {
   getSessionsByDateRange(startDate: Date, endDate: Date) {
     return this.realm
       .objects<PomodoroSession>("PomodoroSession")
-      .filtered("startTime >= $0 AND startTime <= $1", startDate, endDate);
+      .filtered("startTime >= $0 AND startTime <= $1 AND completed = true", startDate, endDate);
   }
 
   getTotalStudyTime(subjectId?: Realm.BSON.ObjectId): number {

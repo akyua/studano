@@ -8,17 +8,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { NavigationState } from '@react-navigation/native';
 import { DrawerNavigationHelpers, DrawerDescriptorMap } from 'node_modules/@react-navigation/drawer/lib/typescript/src/types';
-
-const COLORS = {
-  background: "#000000",
-  border: "#333333",
-  activeBackground: "#333333",
-  activeText: "#ffffff",
-  inactiveText: "#999999"
-};
+import { useTheme } from '@/context/ThemeContext';
 
 const SideBar = (props: DrawerContentComponentProps) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { state, navigation, descriptors } = props;
 
   const createDrawerItem = (
@@ -38,10 +32,10 @@ const SideBar = (props: DrawerContentComponentProps) => {
           icon={descriptor.options.drawerIcon}
           onPress={() => navigation.navigate(route.name)}
           focused={focused}
-          activeTintColor={COLORS.activeText}
-          inactiveTintColor={COLORS.inactiveText}
-          activeBackgroundColor={COLORS.activeBackground}
-          inactiveBackgroundColor={COLORS.background}
+          activeTintColor={colors.primary}
+          inactiveTintColor={colors.textSecondary}
+          activeBackgroundColor={colors.surface}
+          inactiveBackgroundColor={colors.background}
           labelStyle={focused ? styles.activeLabel : styles.inactiveLabel}
         />
       );
@@ -49,14 +43,17 @@ const SideBar = (props: DrawerContentComponentProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={styles.scrollViewContent}
-        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollViewContent, { backgroundColor: colors.background }]}
+        style={[styles.scrollView, { backgroundColor: colors.background }]}
       >
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>{t('sidebar.header')}</Text>
+        <View style={[styles.headerContainer, { 
+          backgroundColor: colors.background,
+          borderBottomColor: colors.border 
+        }]}>
+          <Text style={[styles.headerText, { color: colors.primary }]}>{t('sidebar.header')}</Text>
         </View>
 
         {createDrawerItem(state, navigation, descriptors)}
@@ -69,25 +66,19 @@ const SideBar = (props: DrawerContentComponentProps) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   scrollView: {
-    backgroundColor: COLORS.background,
   },
   scrollViewContent: {
     paddingTop: 0,
-    backgroundColor: COLORS.background,
   },
   headerContainer: {
     padding: 20,
     marginBottom: 10,
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.background
   },
   headerText: {
-    color: COLORS.activeText,
     fontSize: 18,
     fontWeight: 'bold',
   },

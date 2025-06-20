@@ -13,6 +13,7 @@ import Pomodoro from '@/components/PomodoroComponent';
 import SubjectDropdown from '@/components/SubjectDropdown';
 import { useSelectedSubject } from '@/hooks/useSelectedSubject';
 import { Subject } from '@/models/Subject';
+import { useTheme } from '@/context/ThemeContext';
 
 import { HomeStackElements } from '@/navigation/types';
 
@@ -20,6 +21,7 @@ type MainScreenProps = NativeStackScreenProps<HomeStackElements, 'MainPage'>;
 
 function MainPageScreen({ navigation }: MainScreenProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { selectedSubject } = useSelectedSubject();
   const users = useQuery(User);
   const userPreferences = useQuery(UserPreferences);
@@ -62,13 +64,13 @@ function MainPageScreen({ navigation }: MainScreenProps) {
   };
 
   return (
-    <SafeAreaView style={styles.safeAreaContainer}>
+    <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
       <HeaderComponent />
-      <View style={styles.container}>
-        <View style={styles.dropdownContainer}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.dropdownContainer, { backgroundColor: colors.background }]}>
           <SubjectDropdown onSubjectChange={handleSubjectChange} />
         </View>
-        <View style={styles.mainContent}>
+        <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
           <Pomodoro selectedSubject={currentSubject} onResetRef={handleResetRef} />
         </View>
       </View>
@@ -79,7 +81,6 @@ function MainPageScreen({ navigation }: MainScreenProps) {
 const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
-    backgroundColor: '#e0e0e0',
   },
   container: {
     flex: 1,
@@ -87,14 +88,12 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#e0e0e0',
   },
   mainContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#e0e0e0',
   },
 });
 

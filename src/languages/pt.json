@@ -5,10 +5,13 @@
   },
   "settings": {
     "title": "Configurações",
-    "languageSelectionTitle": "Seleção de Idioma",
+    "languageSelectionTitle": "Selecionar Idioma",
+    "themeSelectionTitle": "Selecionar Tema",
+    "lightTheme": "Claro",
+    "darkTheme": "Escuro",
     "aboutStudanoTitle": "Sobre o Studano",
     "whatIs": "O que é?",
-    "whatIsDescription": "O Studano é um aplicativo projetado para te ajudar a organizar sua rotina de estudos e manter o foco em seus objetivos.",
+    "whatIsDescription": "Studano é um aplicativo projetado para ajudá-lo a organizar sua rotina de estudos e manter-se no caminho certo com seus objetivos.",
     "version": "Versão"
   },
   "sidebar": {
@@ -27,12 +30,17 @@
     "addSubjectModalTitle": "Adicionar Nova Matéria",
     "editSubjectModalTitle": "Editar Matéria",
     "subjectNamePlaceholder": "Nome da Matéria",
+    "nameLabel": "Nome:",
+    "sessionDurationLabel": "Duração da Sessão (minutos):",
+    "sessionDurationPlaceholder": "25",
+    "sessionDuration": "{{duration}}",
     "cancelButton": "Cancelar",
     "addButton": "Adicionar",
     "updateButton": "Atualizar",
     "deleteButton": "Remover",
     "deleteConfirmationTitle": "Confirmar Exclusão",
-    "deleteConfirmationMessage": "Tem certeza que deseja remover '{subjectName}'?"
+    "deleteConfirmationMessage": "Tem certeza que deseja remover '{subjectName}'?",
+    "noSubjects": "Nenhuma matéria ainda"
   },
   "schedules": {
     "title": "Cronograma",
@@ -62,6 +70,39 @@
   },
   "history": {
     "title": "Histórico",
-    "message": "Essa será a tela de histórico"
+    "message": "Essa será a tela de histórico",
+    "pomodoro_time_per_day": "Tempo de Pomodoro por Dia",
+    "all_subjects": "Todas as Matérias",
+    "total_time": "Tempo Total",
+    "study_streak": "Sequência de Estudos",
+    "timeline": "Linha do Tempo",
+    "subjects": "Matérias",
+    "calendar": "Calendário",
+    "study_streak_text": "dia de sequência de estudos!",
+    "study_streak_text_plural": "dias de sequência de estudos!",
+    "subject_comparison": "Comparação de Matérias - Últimos",
+    "study_calendar": "Calendário de Estudos - Últimos",
+    "days": "dias",
+    "no_sessions_found": "Nenhuma sessão de pomodoro encontrada para o período selecionado.",
+    "no_subject_data": "Nenhum dado de matéria encontrado para o período selecionado.",
+    "total": "Total",
+    "sessions": "sessões",
+    "subjects_label": "Matérias:",
+    "close": "Fechar"
+  },
+  "pomodoro": {
+    "start": "Iniciar",
+    "pause": "Pausar",
+    "reset": "Reiniciar"
+  },
+  "common": {
+    "loading_subjects": "Carregando matérias...",
+    "error": "Erro",
+    "failed_to_create_subject": "Falha ao criar matéria. Tente novamente.",
+    "failed_to_update_subject": "Falha ao atualizar matéria. Tente novamente.",
+    "failed_to_delete_subject": "Falha ao excluir matéria. Tente novamente.",
+    "cannot_delete": "Não é possível excluir",
+    "must_have_one_subject": "Você deve ter pelo menos uma matéria. Crie outra matéria antes de excluir esta.",
+    "ok": "OK"
   }
 }
