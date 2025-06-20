@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Menu } from "lucide-react-native";
 import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useQuery } from '@/database/RealmContext';
+import { PomodoroSession } from '@/models/PomodoroSession';
 import StreakButton from "@/components/StreakButton.tsx";
 
 const HeaderComponent = () => {
   const navigation = useNavigation();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const sessions = useQuery(PomodoroSession);
+
+  useEffect(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, [sessions.length]);
 
   return (
     <View style={styles.container}>
@@ -13,7 +21,7 @@ const HeaderComponent = () => {
         <Menu size={32} color="black" />
       </TouchableOpacity>
       <View style={styles.fireContainer}>
-        <StreakButton />
+        <StreakButton refreshTrigger={refreshTrigger} />
       </View>
     </View>
   );
