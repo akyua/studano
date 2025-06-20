@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --no-packager",
     "dev:android": "concurrently --raw \"npm run start\" \"npm run android\"",
     "lint": "eslint .",
     "start": "react-native start",
