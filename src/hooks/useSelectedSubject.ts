@@ -129,6 +129,7 @@ export function useSelectedSubject() {
       };
 
       DatabaseLogger.logHook("useSelectedSubject", "createGeneralSubject", undefined, result);
+      return generalSubject;
     } catch (error) {
       DatabaseLogger.logHook(
         "useSelectedSubject",
@@ -137,6 +138,7 @@ export function useSelectedSubject() {
         undefined,
         error,
       );
+      return null;
     }
   };
 

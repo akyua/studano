@@ -12,7 +12,6 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@/database/RealmContext";
 import { Subject } from "@/models/Subject";
 import { useSelectedSubject } from "@/hooks/useSelectedSubject";
-import { SubjectRepository } from "@/repository/SubjectRepository";
 
 interface SubjectSelectorProps {
   onSubjectChange?: (subject: Subject | null) => void;
@@ -23,7 +22,6 @@ export default function SubjectSelector({ onSubjectChange }: SubjectSelectorProp
   const { selectedSubject, changeSelectedSubject, createGeneralSubject } = useSelectedSubject();
   const subjects = useQuery(Subject);
   const [modalVisible, setModalVisible] = useState(false);
-  const subjectRepo = new SubjectRepository();
 
   const handleSubjectSelect = async (subject: Subject | null) => {
     await changeSelectedSubject(subject);
@@ -46,7 +44,7 @@ export default function SubjectSelector({ onSubjectChange }: SubjectSelectorProp
 
   const getSubjectDisplayName = () => {
     if (!selectedSubject) {
-      return t('subjects.noSubject', 'No Subject (Quick Session)');
+      return t('subjects.noSubjects', 'No subjects yet');
     }
     return selectedSubject.name;
   };
@@ -72,24 +70,6 @@ export default function SubjectSelector({ onSubjectChange }: SubjectSelectorProp
         selectedSubject?._id.equals(item._id) && styles.selectedSubjectName
       ]}>
         {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
-
-  const renderNoSubjectItem = () => (
-    <TouchableOpacity
-      style={[
-        styles.subjectItem,
-        !selectedSubject && styles.selectedSubjectItem
-      ]}
-      onPress={() => handleSubjectSelect(null)}
-    >
-      <View style={[styles.subjectBullet, { backgroundColor: '#FF9500' }]} />
-      <Text style={[
-        styles.subjectName,
-        !selectedSubject && styles.selectedSubjectName
-      ]}>
-        {t('subjects.noSubject', 'No Subject (Quick Session)')}
       </Text>
     </TouchableOpacity>
   );
@@ -121,7 +101,6 @@ export default function SubjectSelector({ onSubjectChange }: SubjectSelectorProp
               data={subjects}
               renderItem={renderSubjectItem}
               keyExtractor={(item) => item._id.toString()}
-              ListHeaderComponent={renderNoSubjectItem}
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
                   <Text style={styles.emptyText}>

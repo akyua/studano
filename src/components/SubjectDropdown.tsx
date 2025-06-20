@@ -22,8 +22,11 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
   };
 
   const getSubjectDisplayName = () => {
+    if (!selectedSubject && subjects.length > 0) {
+      return subjects[0].name;
+    }
     if (!selectedSubject) {
-      return t('subjects.noSubject', 'No Subject (Quick Session)');
+      return t('subjects.noSubjects', 'No subjects yet');
     }
     return selectedSubject.name;
   };
@@ -48,23 +51,6 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
         selectedSubject?._id.equals(item._id) && styles.selectedDropdownItemText
       ]}>
         {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
-
-  const renderNoSubjectItem = () => (
-    <TouchableOpacity
-      style={[
-        styles.dropdownItem,
-        !selectedSubject && styles.selectedDropdownItem
-      ]}
-      onPress={() => handleSubjectSelect(null)}
-    >
-      <Text style={[
-        styles.dropdownItemText,
-        !selectedSubject && styles.selectedDropdownItemText
-      ]}>
-        {t('subjects.noSubject', 'No Subject (Quick Session)')}
       </Text>
     </TouchableOpacity>
   );
@@ -95,7 +81,6 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
               data={subjects}
               renderItem={renderSubjectItem}
               keyExtractor={(item) => item._id.toString()}
-              ListHeaderComponent={renderNoSubjectItem}
               style={styles.dropdownList}
             />
           </View>
