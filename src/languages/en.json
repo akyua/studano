@@ -32,7 +32,8 @@
     "updateButton": "Update",
     "deleteButton": "Delete",
     "deleteConfirmationTitle": "Confirm Deletion",
-    "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?"
+    "deleteConfirmationMessage": "Are you sure you want to delete '{subjectName}'?",
+    "noSubjects": "No subjects yet"
   },
   "schedules": {
     "title": "Schedule",
@@ -81,5 +82,20 @@
     "sessions": "sessions",
     "subjects_label": "Subjects:",
     "close": "Close"
+  },
+  "pomodoro": {
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Reset"
+  },
+  "common": {
+    "loading_subjects": "Loading subjects...",
+    "error": "Error",
+    "failed_to_create_subject": "Failed to create subject. Please try again.",
+    "failed_to_update_subject": "Failed to update subject. Please try again.",
+    "failed_to_delete_subject": "Failed to delete subject. Please try again.",
+    "cannot_delete": "Cannot Delete",
+    "must_have_one_subject": "You must have at least one subject. Please create another subject before deleting this one.",
+    "ok": "OK"
   }
 }

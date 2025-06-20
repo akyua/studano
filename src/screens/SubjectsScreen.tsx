@@ -44,7 +44,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
         setNewSubject("");
         setModalVisible(false);
       } catch (error) {
-        Alert.alert("Error", "Failed to create subject. Please try again.");
+        Alert.alert(t('common.error'), t('common.failed_to_create_subject'));
       }
     }
   };
@@ -65,7 +65,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
         setEditingSubject(null);
         setModalVisible(false);
       } catch (error) {
-        Alert.alert("Error", "Failed to update subject. Please try again.");
+        Alert.alert(t('common.error'), t('common.failed_to_update_subject'));
       }
     }
   };
@@ -73,14 +73,14 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
   const handleDeleteSubject = (subjectToDelete: Subject) => {
     if (subjects.length <= 1) {
       Alert.alert(
-        "Cannot Delete",
-        "You must have at least one subject. Please create another subject before deleting this one.",
-        [{ text: "OK" }]
+        t('common.cannot_delete'),
+        t('common.must_have_one_subject'),
+        [{ text: t('common.ok') }]
       );
       return;
     }
 
-    const message = `Are you sure you want to delete '${subjectToDelete.name}'?`;
+    const message = t('subjects.deleteConfirmationMessage', { subjectName: subjectToDelete.name });
     Alert.alert(
       t("subjects.deleteConfirmationTitle"),
       message,
@@ -98,7 +98,7 @@ const SubjectsScreen = (props: SubjectsScreenProps) => {
                 realm.delete(subjectToDelete);
               });
             } catch (error) {
-              Alert.alert("Error", "Failed to delete subject. Please try again.");
+              Alert.alert(t('common.error'), t('common.failed_to_delete_subject'));
             }
           },
           style: "destructive",

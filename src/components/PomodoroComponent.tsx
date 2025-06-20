@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { usePomodoroTimer, PomodoroTimerResult } from '@/hooks/usePomodoroTimer';
 import { Subject } from '@/models/Subject';
 
@@ -15,6 +16,7 @@ interface PomodoroProps {
 }
 
 export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps) {
+  const { t } = useTranslation();
   const {
     isRunning,
     formattedTime,
@@ -70,7 +72,7 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
           disabled={!selectedSubject}
         >
           <Text style={[styles.buttonText, !selectedSubject && styles.disabledButtonText]}>
-            {isRunning ? 'Pause' : 'Start'}
+            {isRunning ? t('pomodoro.pause') : t('pomodoro.start')}
           </Text>
         </TouchableOpacity>
         {secondsLeft < initialTime && (
@@ -78,7 +80,7 @@ export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps)
             onPress={resetTimer}
             style={[styles.button, { marginLeft: 10, backgroundColor: '#666' }]}
           >
-            <Text style={styles.buttonText}>Reset</Text>
+            <Text style={styles.buttonText}>{t('pomodoro.reset')}</Text>
           </TouchableOpacity>
         )}
       </View>

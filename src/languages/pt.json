@@ -32,7 +32,8 @@
     "updateButton": "Atualizar",
     "deleteButton": "Remover",
     "deleteConfirmationTitle": "Confirmar Exclusão",
-    "deleteConfirmationMessage": "Tem certeza que deseja remover '{subjectName}'?"
+    "deleteConfirmationMessage": "Tem certeza que deseja remover '{subjectName}'?",
+    "noSubjects": "Nenhuma matéria ainda"
   },
   "schedules": {
     "title": "Cronograma",
@@ -81,5 +82,20 @@
     "sessions": "sessões",
     "subjects_label": "Matérias:",
     "close": "Fechar"
+  },
+  "pomodoro": {
+    "start": "Iniciar",
+    "pause": "Pausar",
+    "reset": "Reiniciar"
+  },
+  "common": {
+    "loading_subjects": "Carregando matérias...",
+    "error": "Erro",
+    "failed_to_create_subject": "Falha ao criar matéria. Tente novamente.",
+    "failed_to_update_subject": "Falha ao atualizar matéria. Tente novamente.",
+    "failed_to_delete_subject": "Falha ao excluir matéria. Tente novamente.",
+    "cannot_delete": "Não é possível excluir",
+    "must_have_one_subject": "Você deve ter pelo menos uma matéria. Crie outra matéria antes de excluir esta.",
+    "ok": "OK"
   }
 }

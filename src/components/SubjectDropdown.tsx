@@ -33,7 +33,7 @@ export default function SubjectDropdown({ onSubjectChange }: SubjectDropdownProp
 
   const getDisplayText = () => {
     if (subjects.length === 0) {
-      return "Loading subjects...";
+      return t('common.loading_subjects');
     }
     return getSubjectDisplayName();
   };
