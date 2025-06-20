@@ -1,5 +1,5 @@
 export type HomeStackElements = {
-  Main: undefined;
+  MainPage: undefined;
 };
 
 export type SideBarDrawerElements = {

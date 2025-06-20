@@ -7,14 +7,11 @@ const Stack = createNativeStackNavigator<HomeStackElements>();
 
 export function HomeStackNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
-        name="Main"
+        name="MainPage"
         component={MainPageScreen}
-        options={{
-          headerShown: false,
-        }}
       />
     </Stack.Navigator>
   );
-};
+}

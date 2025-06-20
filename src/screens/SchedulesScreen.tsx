@@ -7,51 +7,54 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderComponent from '@/components/HeaderComponent';
 import DaySelector from '@/components/DaySelector';
 import CustomTimePickerModal from '@/components/CustomTimePickerModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRealm, useQuery } from "@/database/RealmContext";
+import { User } from "@/models/User";
+import { Day } from "@/models/Day";
+import { UserPreferencesRepository } from "@/repository/UserPreferencesRepository";
+import { DayRepository } from "@/repository/DayRepository";
 import { scheduleWeeklyNotifications } from '@/services/notificationService';
-
-const daysOfWeekDataEnglish = [
-  { id: 'sun', abbr: 'S' }, { id: 'mon', abbr: 'M' }, { id: 'tue', abbr: 'T' },
-  { id: 'wed', abbr: 'W' }, { id: 'thu', abbr: 'T' }, { id: 'fri', abbr: 'F' },
-  { id: 'sat', abbr: 'S' },
-];
-
-const daysOfWeekDataPortuguese = [
-  { id: 'sun', abbr: 'D' }, { id: 'mon', abbr: 'S' }, { id: 'tue', abbr: 'T' },
-  { id: 'wed', abbr: 'Q' }, { id: 'thu', abbr: 'Q' }, { id: 'fri', abbr: 'S' },
-  { id: 'sat', abbr: 'S' },
-];
-
-const SCHEDULE_STORAGE_KEY = '@YourApp:Schedule';
 
 const SchedulesScreen = (props: SchedulesScreenProps) => {
   const { t, i18n } = useTranslation();
   const isPortuguese = i18n.language === 'pt';
-  const currentDaysOfWeekData = isPortuguese ? daysOfWeekDataPortuguese : daysOfWeekDataEnglish;
+
+  const realm = useRealm();
+  const users = useQuery(User);
+  const days = useQuery(Day);
+  const preferencesRepo = new UserPreferencesRepository();
+  const dayRepo = new DayRepository();
 
   const [selectedDayIds, setSelectedDayIds] = useState<string[]>([]);
   const [notificationTime, setNotificationTime] = useState<Date | undefined>(undefined);
   const [receiveNotifications, setReceiveNotifications] = useState<boolean>(false);
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
 
+  const currentUser = users[0];
+  const sortedDays = days.sorted("order");
+
   useEffect(() => {
-    const loadSchedule = async () => {
-      try {
-        const savedScheduleJSON = await AsyncStorage.getItem(SCHEDULE_STORAGE_KEY);
-        if (savedScheduleJSON !== null) {
-          const savedSchedule = JSON.parse(savedScheduleJSON);
-          setSelectedDayIds(savedSchedule.selectedDayIds || []);
-          setReceiveNotifications(savedSchedule.receiveNotifications || false);
-          if (savedSchedule.notificationTime) {
-            setNotificationTime(new Date(savedSchedule.notificationTime));
-          }
+    if (currentUser) {
+      loadSchedule();
+    }
+  }, [currentUser]);
+
+  const loadSchedule = async () => {
+    try {
+      if (!currentUser) return;
+
+      const scheduleData = preferencesRepo.getScheduleData(currentUser._id);
+
+      if (scheduleData) {
+        setSelectedDayIds(scheduleData.selectedDayIds || []);
+        setReceiveNotifications(scheduleData.receiveNotifications || false);
+        if (scheduleData.notificationTime) {
+          setNotificationTime(new Date(scheduleData.notificationTime));
         }
-      } catch (error) {
-        // Failed to load schedule silently
       }
-    };
-    loadSchedule();
-  }, []);
+    } catch (error) {
+      console.error('Error loading schedule:', error);
+    }
+  };
 
   const handleDayToggle = (dayId: string) => {
     setSelectedDayIds(prevDayIds =>
@@ -76,18 +79,22 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
   };
 
   const handleSaveSchedule = async () => {
-    const scheduleData = {
-      selectedDayIds,
-      notificationTime,
-      receiveNotifications,
-    };
+    if (!currentUser) return;
+
     try {
-      await AsyncStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(scheduleData));
-      await scheduleWeeklyNotifications(
-        scheduleData.selectedDayIds,
-        scheduleData.notificationTime,
-        scheduleData.receiveNotifications
+      preferencesRepo.updateScheduleData(
+        currentUser._id,
+        selectedDayIds,
+        notificationTime,
+        receiveNotifications
       );
+
+      await scheduleWeeklyNotifications(
+        selectedDayIds,
+        notificationTime,
+        receiveNotifications
+      );
+
       Alert.alert(
         t('schedules.saveSuccessTitle', 'Schedule Saved'),
         t('schedules.saveSuccessBody', 'Your notification preferences have been saved.')
@@ -100,20 +107,22 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
     }
   };
 
+  const daysOfWeekData = sortedDays.map(day => ({
+    id: day.code,
+    day: day.abbreviation
+  }));
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <HeaderComponent />
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>{t("schedules.selectDays")}</Text>
         <View style={styles.daysContainer}>
-          {currentDaysOfWeekData.map((day) => (
-            <DaySelector
-              key={day.id}
-              day={day.abbr}
-              isSelected={selectedDayIds.includes(day.id)}
-              onPress={() => handleDayToggle(day.id)}
-            />
-          ))}
+          <DaySelector
+            days={daysOfWeekData}
+            selectedDayIds={selectedDayIds}
+            onDayToggle={handleDayToggle}
+          />
         </View>
 
         <Text style={styles.sectionTitle}>{t("schedules.selectTime")}</Text>
@@ -145,11 +154,10 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
         </TouchableOpacity>
 
         <CustomTimePickerModal
-          isVisible={isTimePickerVisible}
+          visible={isTimePickerVisible}
           onClose={() => setIsTimePickerVisible(false)}
-          onConfirm={handleSetNotificationTime}
+          onTimeSelect={handleSetNotificationTime}
           initialTime={notificationTime || new Date()}
-          use12HourFormat={!isPortuguese}
         />
       </View>
     </SafeAreaView>

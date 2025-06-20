@@ -1,45 +1,37 @@
-import React, { useState, useEffect, useRef } from 'react';
+// src/components/PomodoroComponent.tsx
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { usePomodoroTimer, PomodoroTimerResult } from '@/hooks/usePomodoroTimer';
+import { Subject } from '@/models/Subject';
 
 const RADIUS = 80;
 const STROKE_WIDTH = 8;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-const FULL_TIME = 25 * 60;
 
-export default function Pomodoro() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(FULL_TIME);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+interface PomodoroProps {
+  selectedSubject?: Subject | null;
+  onResetRef?: (resetFunction: () => void) => void;
+}
+
+export default function Pomodoro({ selectedSubject, onResetRef }: PomodoroProps) {
+  const {
+    isRunning,
+    formattedTime,
+    progress,
+    toggleTimer,
+    resetTimer,
+    secondsLeft,
+    initialTime,
+  }: PomodoroTimerResult = usePomodoroTimer(10, selectedSubject);
 
   useEffect(() => {
-    if (isRunning) {
-      intervalRef.current = setInterval(() => {
-        setSecondsLeft((sec) => {
-          if (sec === 0) {
-            clearInterval(intervalRef.current!);
-            setIsRunning(false);
-            return FULL_TIME;
-          }
-          return sec - 1;
-        });
-      }, 1000);
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+    if (onResetRef) {
+      onResetRef(resetTimer);
     }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isRunning]);
+  }, [onResetRef, resetTimer]);
 
-  const progress = secondsLeft / FULL_TIME;
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-
-  const formatTime = (secs: number) => {
-    const minutes = Math.floor(secs / 60).toString().padStart(2, '0');
-    const seconds = (secs % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  };
 
   return (
     <View style={styles.container}>
@@ -68,16 +60,28 @@ export default function Pomodoro() {
             originY={RADIUS + STROKE_WIDTH}
           />
         </Svg>
-
-        <Text style={styles.timer}>{formatTime(secondsLeft)}</Text>
+        <Text style={styles.timer}>{formattedTime}</Text>
       </View>
 
-      <TouchableOpacity
-        onPress={() => setIsRunning(!isRunning)}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>{isRunning ? 'Pause' : 'Start'}</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          onPress={toggleTimer}
+          style={styles.button}
+          disabled={!selectedSubject}
+        >
+          <Text style={[styles.buttonText, !selectedSubject && styles.disabledButtonText]}>
+            {isRunning ? 'Pause' : 'Start'}
+          </Text>
+        </TouchableOpacity>
+        {secondsLeft < initialTime && (
+          <TouchableOpacity
+            onPress={resetTimer}
+            style={[styles.button, { marginLeft: 10, backgroundColor: '#666' }]}
+          >
+            <Text style={styles.buttonText}>Reset</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
@@ -94,6 +98,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: RADIUS * 2 + STROKE_WIDTH * 2,
     height: RADIUS * 2 + STROKE_WIDTH * 2,
+    marginBottom: 40,
   },
   timer: {
     position: 'absolute',
@@ -102,15 +107,22 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   button: {
-    marginTop: 40,
     backgroundColor: '#000',
     borderRadius: 30,
     paddingVertical: 12,
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
   },
+  disabledButtonText: {
+    color: '#999',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  }
 });

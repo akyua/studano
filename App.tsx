@@ -4,7 +4,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AppNavigator } from '@/navigation/AppNavigator';
 import 'react-native-gesture-handler';
 import { StatusBar, Platform } from "react-native";
-import notifee, { AndroidImportance }  from '@notifee/react-native';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import { RealmProvider } from '@/database/RealmContext';
+import { useEnsureUser } from "@/hooks/useEnsureUser";
+
+function EnsureUser() {
+  useEnsureUser();
+  return null;
+}
 
 export default function App() {
   useEffect(() => {
@@ -18,9 +25,7 @@ export default function App() {
             importance: AndroidImportance.HIGH,
           });
         }
-        console.log("funcionando as notificações")
       } catch (error) {
-        console.error("Falha na config das notificações")
       }
     }
     setupNotifications();
@@ -29,9 +34,12 @@ export default function App() {
   return (
     <>
       <StatusBar hidden={true} />
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+      <RealmProvider>
+        <EnsureUser />
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </RealmProvider>
     </>
   );
 }
