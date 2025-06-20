@@ -62,6 +62,24 @@
   },
   "history": {
     "title": "History",
-    "message": "This will be the History screen"
+    "message": "This will be the History screen",
+    "pomodoro_time_per_day": "Pomodoro Time Per Day",
+    "all_subjects": "All Subjects",
+    "total_time": "Total Time",
+    "study_streak": "Study Streak",
+    "timeline": "Timeline",
+    "subjects": "Subjects",
+    "calendar": "Calendar",
+    "study_streak_text": "day study streak!",
+    "study_streak_text_plural": "days study streak!",
+    "subject_comparison": "Subject Comparison - Last",
+    "study_calendar": "Study Calendar - Last",
+    "days": "days",
+    "no_sessions_found": "No pomodoro sessions found for the selected period.",
+    "no_subject_data": "No subject data found for the selected period.",
+    "total": "Total",
+    "sessions": "sessions",
+    "subjects_label": "Subjects:",
+    "close": "Close"
   }
 }

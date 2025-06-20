@@ -62,6 +62,24 @@
   },
   "history": {
     "title": "Histórico",
-    "message": "Essa será a tela de histórico"
+    "message": "Essa será a tela de histórico",
+    "pomodoro_time_per_day": "Tempo de Pomodoro por Dia",
+    "all_subjects": "Todas as Matérias",
+    "total_time": "Tempo Total",
+    "study_streak": "Sequência de Estudos",
+    "timeline": "Linha do Tempo",
+    "subjects": "Matérias",
+    "calendar": "Calendário",
+    "study_streak_text": "dia de sequência de estudos!",
+    "study_streak_text_plural": "dias de sequência de estudos!",
+    "subject_comparison": "Comparação de Matérias - Últimos",
+    "study_calendar": "Calendário de Estudos - Últimos",
+    "days": "dias",
+    "no_sessions_found": "Nenhuma sessão de pomodoro encontrada para o período selecionado.",
+    "no_subject_data": "Nenhum dado de matéria encontrado para o período selecionado.",
+    "total": "Total",
+    "sessions": "sessões",
+    "subjects_label": "Matérias:",
+    "close": "Fechar"
   }
 }
