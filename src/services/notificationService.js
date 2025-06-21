@@ -60,6 +60,7 @@ export async function scheduleWeeklyNotifications(dayIds, time, isEnabled) {
           body: t('notification.body', 'It\'s time for your scheduled study!'),
           android: {
             channelId: 'default',
+            smallIcon: 'ic_notification',
             pressAction: {
               id: 'default',
             },
