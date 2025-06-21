@@ -45,6 +45,10 @@
     "createGeneral": "Criar Matéria Padrão",
     "createError": "Não foi possível criar a matéria Padrão"
   },
+  "permissions": {
+    "deniedTitle": "Permissão Negada",
+    "deniedBody": "Para receber notificações, você precisa ativar as permissões nas configurações do aplicativo."
+  },
   "schedules": {
     "title": "Cronograma",
     "selectDays": "Selecionar Dias",

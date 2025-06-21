@@ -45,6 +45,10 @@
     "createGeneral": "Create Default Subject",
     "createError": "Could not create Default subject"
   },
+  "permissions": {
+    "deniedTitle": "Permission Denied",
+    "deniedBody": "To receive notifications, you need to enable permissions in the application settings."
+  },
   "schedules": {
     "title": "Schedule",
     "selectDays": "Select Days",

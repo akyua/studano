@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert, Platform } from "react-native";
+import notifee, { AuthorizationStatus } from '@notifee/react-native';
 import "i18n";
 import { useTranslation } from "react-i18next";
 import { SchedulesScreenProps } from "./types";
@@ -34,7 +35,27 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
   const currentUser = users[0];
   const sortedDays = days.sorted("order");
 
+  async function requestNotificationPermission() {
+    if (Platform.OS === 'android' && Platform.Version < 33) {
+      return true;
+    }
+
+    const settings = await notifee.requestPermission();
+
+    if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+      return true;
+    } else {
+      Alert.alert(
+        t('permissions.deniedTitle'),
+        t('permissions.deniedBody'),
+      );
+      return false;
+    }
+  }
+
   useEffect(() => {
+    requestNotificationPermission();
+    
     if (currentUser) {
       loadSchedule();
     }
@@ -75,11 +96,16 @@ const SchedulesScreen = (props: SchedulesScreenProps) => {
 
   const handleSetNotificationTime = (newTime: Date) => {
     setNotificationTime(newTime);
-    setIsTimePickerVisible(false);
   };
 
   const handleSaveSchedule = async () => {
     if (!currentUser) return;
+
+    const hasPermission = await requestNotificationPermission();
+    if (!hasPermission) {
+      return;
+    }
+
     try {
       preferencesRepo.updateScheduleData(
         currentUser._id,

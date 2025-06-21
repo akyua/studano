@@ -93,6 +93,7 @@ const CustomTimePickerModal: React.FC<CustomTimePickerModalProps> = ({
     finalDate.setHours(finalHour);
     finalDate.setMinutes(selectedMinute);
     onTimeSelect(finalDate);
+    onClose();
   };
   
   const renderPickerItem = (item: number | string, isSelected: boolean) => (
