@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";  
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
@@ -46,7 +47,7 @@ const SideBar = (props: DrawerContentComponentProps) => {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={[styles.scrollViewContent, { backgroundColor: colors.background }]}
+        contentContainerStyle={[{ backgroundColor: colors.background }]}
         style={[styles.scrollView, { backgroundColor: colors.background }]}
       >
         <View style={[styles.headerContainer, { 
@@ -68,9 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-  },
-  scrollViewContent: {
-    paddingTop: 0,
   },
   headerContainer: {
     padding: 20,

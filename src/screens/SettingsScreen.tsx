@@ -101,7 +101,7 @@ function SettingsScreen() {
             {t('settings.whatIsDescription', 'Studano is an app designed to help you organize your study routine and stay on track with your goals.')}
           </Text>
           <Text style={[styles.aboutText, { color: colors.textSecondary }]}>
-            <Text style={[styles.boldText, { color: colors.text }]}>{t('settings.version', 'Version')}</Text>{' '}1.0.0 (beta)
+            <Text style={[styles.boldText, { color: colors.text }]}>{t('settings.version', 'Version')}</Text>{' '}1.2.0 (beta)
           </Text>
         </View>
 

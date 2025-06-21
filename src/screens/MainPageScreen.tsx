@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";  
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import 'i18n';
 import { useTranslation } from 'react-i18next';
@@ -84,16 +85,15 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    padding: 20,
   },
   dropdownContainer: {
-    paddingHorizontal: 16,
     paddingVertical: 8,
   },
   mainContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
     paddingBottom: 80, 
   },
 });
