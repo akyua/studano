@@ -14,6 +14,12 @@
 - NodeJS
 - MongoDB
 
+# Release | Download do App
+
+Baixe o arquivo `.apk` da versão mais recente clicando aqui (para android):
+
+[**Download da Última Versão**](https://github.com/akyua/studano/releases/latest)
+
 ## Como rodar o projeto no windows
 
 Necessário ter instalado as tecnologias citadas na parte de tecnologias
@@ -131,4 +137,6 @@ git pull
 git checkout -b TDEV-1
 ```
 
-Quando a task estiver finalizada, pode dar merge pra main, só não esqueça de manter atualizada.
+Motivo: Organização de branches da aplicação, para evitar criar conflitos na master e também para saber a qual tarefa se trata aqueles commit, o sufixo de TDEV é referenciado como Tarefa de Desenvolvimento.
+
+Quando a task estiver finalizada, pode dar merge request pra main, só não esqueça de manter a branch da atualizada.
